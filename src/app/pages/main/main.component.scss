@@ -1,0 +1,34 @@
+.navbar-start {
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    a:hover {
+        color: lightcoral !important;
+    }
+
+    .level-item {
+        color: black !important;
+        
+    }
+}
+
+.wrapper {
+    display: grid;
+    grid-auto-flow: column dense;
+  
+    grid-template-columns: repeat(50, [col] 1fr);
+    grid-template-rows: repeat(50, [row] 1fr);
+  }
+  
+.wrapper > div {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}

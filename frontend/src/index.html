@@ -1,13 +1,37 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
+
 <head>
-  <meta charset="utf-8">
-  <title>Frontend</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Mapster</title>
+	<link rel="stylesheet" href="styles.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
+
+
 <body>
-  <app-root></app-root>
+	<div class="authentication">
+		
+		<form class="authentication-form" id="login_form">
+			<h1 class="authentication-title">Mapster</h1>
+	
+			<h2 class="authentication-subtitle">Log in to <b>Mapster</b></h2>
+	
+			<div class="errors" id="errors"></div>
+	
+			<input type="email" name="email" placeholder="Email" class="authentication-input" />
+			<input type="password" name="password" placeholder="Password" class="authentication-input" />
+	
+			<div class="authentication-actions">
+				<button type="submit" class="authentication-button">Log in</button>
+				<a href="registration.html" title="Create account" class="authentication-link">Create account</a>
+			</div>
+		</form>
+		<img class = "fit-picture" src = "images/dancing.PNG" >
+
+	</div>
+
+
 </body>
 </html>

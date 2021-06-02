@@ -1,0 +1,17 @@
+// Global styles and variables here
+
+// Import Fonts (Monteserrat)
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+// Update some of Bulma's global variables
+$family-sans-serif: "Montserrat", sans-serif;
+
+// Update some of Bulma's component variables
+$control-border-width: 2px;
+$input-border-color: transparent;
+$input-shadow: none;
+
+// Set custom global styles (applied to every page)
+html, body {
+    height: 100%;
+}

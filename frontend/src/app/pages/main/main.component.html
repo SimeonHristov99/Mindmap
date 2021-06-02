@@ -1,0 +1,246 @@
+<div class=".container.is-fullhd">
+    <nav class="navbar is-transparent">
+        <div class="navbar-brand">
+            <span class="navbar-item">
+                <p class="subtitle is-3 pl-4">Mapster</p>
+            </span>
+            <div class="navbar-burger" data-target="navbarBurger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div id="navbarBurger" class="navbar-menu">
+            <div class="navbar-start">
+                <p class="navbar-item subtitle is-4">
+                    Document 1
+                </p>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="field is-grouped">
+
+                        <p class="control">
+                            <a class="button is-info is-hovered" href="#">
+                                <span class="icon">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <span>Share</span>
+                            </a>
+                        </p>
+
+                        <p class="control pl-5 pr-5">
+                            <a class="bd-tw-button button">
+                                <span class="icon">
+                                    <i class="fas fa-user-circle"></i>
+                                </span>
+                            </a>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="level mt-4 px-6">
+
+        <button class="button is-medium" (click)="undo()">
+            <span class="icon is-small">
+                <a class="level-item" id="undo">
+                    <i class="fas fa-undo-alt"></i>
+                </a>
+            </span>
+        </button>
+
+        <button class="button is-medium" (click)="zoomIn()">
+            <span class="icon is-small">
+                <a class="level-item" id="zoom-in">
+                    <i class="fas fa-search-plus"></i>
+                </a>
+            </span>
+        </button>
+
+        <button class="button is-medium" (click)="zoomOut()">
+            <span class="icon is-small">
+                <a class="level-item" id="zoom-out">
+                    <i class="fas fa-search-minus"></i>
+                </a>
+            </span>
+        </button>
+
+        <button class="button is-medium" (click)="remove()">
+            <span class="icon is-small">
+                <a class="level-item">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </span>
+        </button>
+
+
+        <button class="button is-medium" (click)="copy()">
+            <span class="icon is-small">
+                <a class="level-item" id="copy">
+                    <i class="far fa-copy"></i>
+                </a>
+            </span>
+        </button>
+
+
+        <button class="button is-medium" (click)="paste()">
+            <span class="icon is-small">
+                <a class="level-item" id="paste">
+                    <i class="far fa-clipboard"></i>
+                </a>
+            </span>
+        </button>
+
+        <button class="button is-medium" (click)="redo()">
+            <span class="icon is-small">
+                <a class="level-item" id="redo">
+                    <i class="fas fa-redo-alt"></i>
+                </a>
+            </span>
+        </button>
+
+    </nav>
+
+    <div class="columns">
+
+        <div id="showLeft" class="is-hidden">
+            <aside class="menu">
+                <button class="button is-small is-pulled-right mnuButton" (click)="hide('#showLeft'); hide('#colLeft')">
+                    <figure class="image is-16x16">
+                        <img src="../../../assets/images/rightArrow.png" alt="Italian Trulli">
+                    </figure>
+                </button>
+            </aside>
+        </div>
+
+        <div class="column is-one-fifth box ml-2" id="colLeft">
+            <aside class="menu" id="mnuLeft">
+                <p class="menu-label">
+                    Documents
+                    <button class="button is-small is-pulled-right mnuButton"
+                        (click)="hide('#showLeft'); hide('#colLeft')">
+                        <span class="icon is-small">
+                            <figure class="image is-16x16">
+                                <img src="../../../assets/images/leftArrow.png" alt="Italian Trulli">
+                            </figure>
+                        </span>
+                    </button>
+                </p>
+                <ul class="menu-list">
+                    <a class="list-menu-item is-active">
+                        <p>Document 1</p>
+                    </a>
+                    <a class="list-menu-item" *ngFor="let doc of docs" [routerLink]="['/docs', doc._id]">
+                        <p>{{ doc.title }}</p>
+                    </a>
+                </ul>
+                <button class="button is-success" id="btnNew" routerLink="/new-document">New</button>
+            </aside>
+        </div>
+
+        <div #middleColumn class="column" id="middleColumn" appMovableArea>
+
+            <div *ngFor="let shape of shapes; let i = index; trackBy: trackById" [ngClass]="shape.type" [ngStyle]="{'background-color': shape.backgroundColor ? shape.backgroundColor : '#ffffff',
+                             'color': shape.textColor ? shape.textColor : '#ffffff',
+                             'border-color': shape.label ? shape.borderColor : '#ffffff',
+                             'border-top-color': shape.borderColor}"
+                [currentPosition]="{ x: shape.translateX, y: shape.translateY }" appMovable tabindex="0"
+                (click)="setCurrentShapeIndex(i); updateLabel()">
+                {{ shape.type === 'ellipse' ? shape.label : '' }}
+                <div class="resizer ne"></div>
+                <div class="resizer nw"></div>
+                <div class="resizer sw"></div>
+                <div class="resizer se"></div>
+            </div>
+
+        </div>
+
+        <div id="showRight" class="is-hidden">
+            <aside class="menu">
+                <button class="button is-small is-pulled-right mnuButton"
+                    (click)="hide('#showRight'); hide('#colRight')">
+                    <figure class="image is-16x16">
+                        <img src="../../../assets/images/leftArrow.png" alt="Italian Trulli">
+                    </figure>
+                </button>
+            </aside>
+        </div>
+
+        <div class="column box is-2" id="colRight">
+            <div class="box">
+                <aside class="menu">
+                    <p class="menu-label">
+                        <button class="button is-small mnuButton" (click)="hide('#colRight'); hide('#showRight')">
+                            <span class="icon is-small">
+                                <figure class="image is-16x16">
+                                    <img src="../../../assets/images/rightArrow.png" alt="Italian Trulli">
+                                </figure>
+                            </span>
+                        </button>
+                    </p>
+                    <div>
+                        <p class="menu-label title is-6">
+                            Shapes
+                        </p>
+                        <ul class="menu-list">
+                            <button (click)="add('ellipse')">
+                                <figure class="image is-64x64">
+                                    <img src="../../../assets/images/circle.png" alt="circle">
+                                </figure>
+                            </button>
+                            <button class="mt-2" (click)="add('line')">
+                                <img src="../../../assets/images/line.png" alt="line">
+                            </button>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="menu-label mt-6 title is-6">
+                            Properties
+                        </p>
+                        <ul class="menu-list" id="props">
+                            <div class="columns">
+                                <div class="column">
+                                    <span>Label</span>
+                                </div>
+                                <div class="column">
+                                    <input #labelValue class="input" type="text" placeholder="Name">
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column">
+                                    <span>Colour</span>
+                                </div>
+                                <div class="column">
+                                    <input #textColor type="color" />
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column">
+                                    <span>Border</span>
+                                </div>
+                                <div class="column">
+                                    <input #borderColor type="color" />
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column">
+                                    <span>Fill</span>
+                                </div>
+                                <div class="column">
+                                    <input #fillColor type="color" />
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+    </div>
+</div>

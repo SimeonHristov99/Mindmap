@@ -19,11 +19,11 @@ const ShapeSchema = new mongoose.Schema({
         trim: true
     },
     translateX: {
-        type: mongoose.Types.Decimal128,
+        type: Number,
         required: true,
     },
     translateY: {
-        type: mongoose.Types.Decimal128,
+        type: Number,
         required: true,
     },
     backgroundColor: {

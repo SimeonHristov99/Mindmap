@@ -19,9 +19,13 @@ app.use(function (req, res, next) { // Copied from https://enable-cors.org/serve
     next();
 });
 
-/* ROUTE HANDLERS */
+//##############################################################################
+// ROUTE HANDLERS
+//##############################################################################
 
-/* LIST ROUTES */
+//##############################################
+// DOCUMENT ROUTES
+//##############################################
 
 /**
  * GET /docs
@@ -34,7 +38,7 @@ app.get('/docs', (req, res) => {
     }).catch((err) => {
         res.send(err);
     })
-})
+});
 
 /**
  * POST /docs
@@ -43,16 +47,16 @@ app.get('/docs', (req, res) => {
 app.post('/docs', (req, res) => {
     // Create a new document and return it alongside the user's id.
     // The document information (fields) will be passed in via the JSON request body.
-    let title = req.body.title;
 
     let newDoc = new Document({
-        title
+        title: req.body.title
     });
+
     newDoc.save().then((doc) => {
         // the full doc is returned (incl. id)
         res.send(doc);
     })
-})
+});
 
 /**
  * PATCH /docs/:id
@@ -67,7 +71,7 @@ app.patch('/docs/:id', (req, res) => {
     }).catch((err) => {
         console.log(err);
     });
-})
+});
 
 /**
  * DELETE /docs/:id
@@ -78,7 +82,75 @@ app.delete('/docs/:id', (req, res) => {
     Document.findOneAndRemove({ _id: req.params.id }).then((docToRemove) => {
         res.send(docToRemove);
     })
-})
+});
+
+
+//##############################################
+// SHAPE ROUTES
+//##############################################
+
+/**
+ * GET /docs/:docId/tasks
+ * Purpose: Get all shapes that belong to a specific document (specified by docId).
+ */
+app.get('/docs/:docId/shapes', (req, res) => {
+    Shape.find({
+        _docId: req.params.docId
+    }).then((shapes) => {
+        res.send(shapes);
+    })
+});
+
+/**
+ * POST /docs
+ * Purpose: Create a new shape in a specific document (specified by docId).
+ */
+app.post('/docs/:docId/shapes', (req, res) => {
+    let newShape = new Shape({
+        _docId: req.params.docId,
+        id: req.body.id,
+        type: req.body.type,
+        label: req.body.label,
+        translateX: req.body.translateX,
+        translateY: req.body.translateY,
+        backgroundColor: req.body.backgroundColor,
+        textColor: req.body.textColor,
+        borderColor: req.body.borderColor,
+    });
+
+    newShape.save().then((doc) => {
+        res.send(doc);
+    })
+});
+
+/**
+ * PATCH /docs/:docId/shapes/:shapeId
+ * Purpose: Update an existing shape (specified by shapeId).
+ */
+app.patch('/docs/:docId/shapes/:shapeId', (req, res) => {
+    Shape.findOneAndUpdate({
+        _id: req.params.shapeId,
+        _docId: req.params.docId
+    }, {
+        $set: req.body
+    }
+    ).then(() => {
+        res.sendStatus(200);
+    })
+});
+
+/**
+ * DELETE /docs/:docId/shapes/:shapeId
+ * Purpose: Delete a shape in a document.
+ */
+app.delete('/docs/:docId/shapes/:shapeId', (req, res) => {
+    Shape.findOneAndRemove({
+        _id: req.params.shapeId,
+        _docId: req.params.docId
+    }).then((shapeToRemove) => {
+        res.send(shapeToRemove);
+    })
+});
 
 app.listen(3001, () => {
     console.log(`Server is listening on port 3001...`);

@@ -22,8 +22,29 @@ export class DocumentService {
     return this.webReqServ.post('docs', { title });
   }
 
+  /**
+   * This method calls the endpoint
+   * that returns all the documents from the database.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
   getDocs(): Observable<object> {
     return this.webReqServ.get('docs');
+  }
+
+  /**
+   * This method calls the endpoint
+   * that returns all the shapes from a given documents in the database.
+   *
+   * @param[in] docId
+   *     The id of the document that the shapes are part of.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  getShapes(docId: string): Observable<object> {
+    return this.webReqServ.get(`docs/${docId}/shapes`);
   }
 
   /**
@@ -46,23 +67,6 @@ export class DocumentService {
       type,
       /* ??? */
     });
-
-  }
-
-  getShapes(docId: string): Observable<object> {
-
-    return this.webReqServ.get(`docs/${docId}/shapes`);
-
-    // return {
-    //   type: 'circle',
-    //   data: {
-    //     translate: [78.0404, 365.4],
-    //     rotate: -392.359,
-    //     transformOrigin: '50% 50%',
-    //     width: 372,
-    //     height: 208,
-    //   }
-    // };
 
   }
 }

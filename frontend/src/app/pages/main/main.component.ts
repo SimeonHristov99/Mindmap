@@ -153,16 +153,13 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.route.params.subscribe((params: Params) => {
       console.log(params);
 
-      // this.docServ.getShapes(params.docId).subscribe((shapes: any) => {
-      //   this.shapes = this.testShapes;
-      // });
-
-      this.shapes = this.testShapes;
-
-      this.docServ.getDocs().subscribe((docs: any) => {
-        this.docs = docs;
+      this.docServ.getShapes(params.docId).subscribe((shapes: any) => {
+        this.shapes = shapes;
       });
+    });
 
+    this.docServ.getDocs().subscribe((docs: any) => {
+      this.docs = docs;
     });
 
     this.labelValueRef.nativeElement.addEventListener('input', () => {

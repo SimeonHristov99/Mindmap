@@ -10,6 +10,17 @@ export class DocumentService {
   constructor(private webReqServ: WebRequestService) { }
 
   /**
+   * This method calls the endpoint
+   * that returns all the documents from the database.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  getDocs(): Observable<object> {
+    return this.webReqServ.get('docs');
+  }
+
+  /**
    * This method sends a web request to create a new document.
    *
    * @param[in] title
@@ -20,17 +31,6 @@ export class DocumentService {
    */
   createDocument(title: string): Observable<object> {
     return this.webReqServ.post('docs', { title });
-  }
-
-  /**
-   * This method calls the endpoint
-   * that returns all the documents from the database.
-   *
-   * @returns
-   *     The object returned from the database wrapped in an Observable.
-   */
-  getDocs(): Observable<object> {
-    return this.webReqServ.get('docs');
   }
 
   /**
@@ -48,25 +48,63 @@ export class DocumentService {
   }
 
   /**
-   * This function sends a post request to the database to create a shape.
+   * This method sends a web request to create
+   * a new shape in a given document.
    *
-   * @param[in] docId This is the id of the document into which the shape will be created.
+   * @param docId
+   *     This is the id of the doument in which
+   *     the new shape has to be created.
    *
-   * @param[in] type This is the type of the shape that will be created.
-   * Should only be 'cirlce' or 'line'.
+   * @param id
+   *     This is the id of the shape
+   *     as it was stored in the shapes array.
    *
-   * @returns An Observable with which it indicated whether the creation was successful.
+   * @param type
+   *     This is the type/geometric interpretation of the shape.
+   *
+   * @param label
+   *     This is the label of the shape (if any).
+   *
+   * @param translateX
+   *     This is the position to which the shape has to be moved
+   *     on the X axis.
+   *
+   * @param translateY
+   *     This is the position to which the shape has to be moved
+   *     on the Y axis.
+   *
+   * @param backgroundColor
+   *     This is the last set background color.
+   *
+   * @param textColor
+   *     This is the last set text color.
+   *
+   * @param borderColor
+   *     This is the last set border color.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
    */
   createShape(
     docId: string,
+    id: number,
     type: string,
-    /* ??? */
+    translateX: number,
+    translateY: number,
+    borderColor: string,
+    label?: string,
+    backgroundColor?: string,
+    textColor?: string,
   ): Observable<object> {
-
     return this.webReqServ.post(`docs/${docId}/shapes`, {
+      id,
       type,
-      /* ??? */
+      label,
+      translateX,
+      translateY,
+      backgroundColor,
+      textColor,
+      borderColor
     });
-
   }
 }

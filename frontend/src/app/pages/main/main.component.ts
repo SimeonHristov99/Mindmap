@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { DocumentService } from 'src/app/document.service';
+import { Shape } from 'src/app/models/shape.model';
 
 enum Actions {
   ADD,
@@ -14,17 +15,6 @@ enum Actions {
 interface Action {
   type: Actions;
   alteredShape?: Shape;
-}
-
-interface Shape {
-  id: number;
-  type: string;
-  label?: string;
-  translateX: number;
-  translateY: number;
-  backgroundColor?: string;
-  textColor?: string;
-  borderColor: string;
 }
 
 @Component({
@@ -43,7 +33,8 @@ export class MainComponent implements OnInit, AfterViewInit {
   testShapes: Shape[] = [
     {
       id: 0,
-      type: 'ellipse', label: 'Trapped 1',
+      type: 'ellipse',
+      label: 'Trapped 1',
       translateX: 113,
       translateY: 201,
       backgroundColor: '#C02B2B',
@@ -64,6 +55,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   shapes: Shape[] = [];
   docs: any;
   currentDocName = '';
+  private docId = '';
 
   @ViewChild('labelValue', { static: true }) labelValueRef: ElementRef;
   @ViewChild('fillColor', { static: true }) fillColorRef: ElementRef;
@@ -132,6 +124,18 @@ export class MainComponent implements OnInit, AfterViewInit {
   private didAdd(shape: Shape): void {
     this.shapes.push(shape);
     MainComponent.currentShapeIndex = this.shapes.length - 1;
+
+    this.docServ.createShape(this.docId,
+      shape.id,
+      shape.type,
+      shape.translateX,
+      shape.translateY,
+      shape.borderColor,
+      shape.label,
+      shape.backgroundColor,
+      shape.textColor,
+    ).subscribe((newShape: object) => {
+    });
   }
 
   constructor(
@@ -151,16 +155,18 @@ export class MainComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params: Params) => {
-      console.log(params);
-
-      this.docServ.getShapes(params.docId).subscribe((shapes: any) => {
-        this.shapes = shapes;
-      });
-    });
-
     this.docServ.getDocs().subscribe((docs: any) => {
       this.docs = docs;
+    });
+
+    this.route.params.subscribe((params: Params) => {
+      if (params.docId) {
+        this.docId = params.docId;
+
+        this.docServ.getShapes(params.docId).subscribe((shapes: any) => {
+          this.shapes = shapes;
+        });
+      }
     });
 
     this.labelValueRef.nativeElement.addEventListener('input', () => {
@@ -211,6 +217,8 @@ export class MainComponent implements OnInit, AfterViewInit {
       this.shapes[MainComponent.currentShapeIndex].borderColor = this.borderColorRef.nativeElement.value;
     }, false);
   }
+
+
 
   /**
    * The method sets the value of the variable

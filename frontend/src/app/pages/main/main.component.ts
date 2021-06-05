@@ -63,6 +63,7 @@ export class MainComponent implements OnInit, AfterViewInit {
   ];
   shapes: Shape[] = [];
   docs: any;
+  currentDocName = '';
 
   @ViewChild('labelValue', { static: true }) labelValueRef: ElementRef;
   @ViewChild('fillColor', { static: true }) fillColorRef: ElementRef;

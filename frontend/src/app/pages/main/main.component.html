@@ -14,7 +14,7 @@
         <div id="navbarBurger" class="navbar-menu">
             <div class="navbar-start">
                 <p class="navbar-item subtitle is-4">
-                    Document 1
+                    {{ currentDocName }}
                 </p>
             </div>
 
@@ -135,7 +135,8 @@
                 <ul class="menu-list">
                     <a class="list-menu-item" *ngFor="let doc of docs"
                         [routerLink]="['/docs', doc._id]"
-                        routerLinkActive="is-active">
+                        routerLinkActive="is-active"
+                        (click)="currentDocName = doc.title">
                         <p>{{ doc.title }}</p>
                     </a>
                 </ul>

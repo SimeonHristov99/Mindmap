@@ -425,6 +425,10 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.shapes.push(MainComponent.clipboard);
 
     MainComponent.clipboard = null;
+
+    MainComponent.actionsUndo.push({
+      type: Actions.PASTE,
+    });
   }
 
   /**
@@ -477,8 +481,8 @@ export class MainComponent implements OnInit, AfterViewInit {
       }
 
       case Actions.COPY: {
-        // when copied a shape is stored in the clipboard variable.
-        // In order to undo it, just clear the clipboard variable.
+        // if a shape is copied that it is in the clipboard variable.
+        // In order to undo copying just clear the clipboard variable.
 
         MainComponent.clipboard = null;
 
@@ -486,6 +490,15 @@ export class MainComponent implements OnInit, AfterViewInit {
       }
 
       case Actions.PASTE: {
+        // if a shape has been pasted then it was in the clipboard variable.
+        // In order to undo pasting remove the last shape in the array
+        // and put it back in the clipboard variable.
+
+        let top: Shape | undefined = this.shapes.pop();
+
+        if (top) {
+          MainComponent.clipboard = top;
+        }
 
         break;
       }

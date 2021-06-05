@@ -3,11 +3,15 @@
 
         <h1 class="title">Create a new document</h1>
 
-        <input #docTitleInput class="input has-background-light is-medium" type="text" placeholder="Enter a name, eg. Project Vulkan">
+        <input #docTitleInput class="input has-background-light is-medium" type="text"
+            placeholder="Enter a name, eg. Project Vulkan">
+
         <br><br>
+
         <div class="buttons is-right">
             <button class="button is-medium" routerLink="/docs">Cancel</button>
-            <button class="button is-medium is-primary has-text-white" (click)="createDocument(docTitleInput.value)" routerLink="/docs">Create</button>
+            <button class="button is-medium is-primary has-text-white" (click)="createDocument(docTitleInput.value)"
+                routerLink="/docs">Create</button>
         </div>
 
     </div>

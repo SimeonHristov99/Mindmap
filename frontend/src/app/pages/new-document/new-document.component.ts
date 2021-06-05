@@ -10,11 +10,17 @@ export class NewDocumentComponent {
 
   constructor(private docServ: DocumentService) { }
 
+  /**
+   * This method calls the web service to create a new document.
+   * 
+   * @param[in] title
+   *     The name of the document to be created.
+   */
   createDocument(title: string): void {
     this.docServ.createDocument(title).subscribe((response: any) => {
       console.log(response);
 
-      // Navigate to /main/docs/response._id
+      // Navigate to /docs/response._id
     });
   }
 

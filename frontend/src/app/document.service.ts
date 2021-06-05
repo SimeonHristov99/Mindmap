@@ -9,8 +9,16 @@ export class DocumentService {
 
   constructor(private webReqServ: WebRequestService) { }
 
+  /**
+   * This method sends a web request to create a new document.
+   *
+   * @param[in] title
+   *     The name of the new document.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
   createDocument(title: string): Observable<object> {
-    // Send a web request to create a new document
     return this.webReqServ.post('docs', { title });
   }
 

@@ -133,7 +133,7 @@ export class MainComponent implements OnInit, AfterViewInit {
     MainComponent.currentShapeIndex = this.shapes.length - 1;
   }
 
-  constructor( // formatter brings the constructor to the top
+  constructor(
     private docServ: DocumentService,
     private route: ActivatedRoute,
     labelValueRef: ElementRef,

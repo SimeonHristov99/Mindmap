@@ -3,8 +3,6 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { DocumentService } from 'src/app/document.service';
 
 enum Actions {
-  UPD_LBL,
-  HIDE,
   ADD,
   REMOVE,
   ZOOM_OUT,
@@ -406,6 +404,10 @@ export class MainComponent implements OnInit, AfterViewInit {
       textColor: this.shapes[MainComponent.currentShapeIndex].textColor,
       borderColor: this.shapes[MainComponent.currentShapeIndex].borderColor,
     };
+
+    MainComponent.actionsUndo.push({
+      type: Actions.COPY,
+    });
   }
 
   /**
@@ -437,15 +439,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
 
     switch (act.type) {
-      case Actions.UPD_LBL: {
-
-        break;
-      }
-
-      case Actions.HIDE: {
-
-        break;
-      }
 
       case Actions.ADD: {
         if (!act.alteredShape) {
@@ -484,6 +477,10 @@ export class MainComponent implements OnInit, AfterViewInit {
       }
 
       case Actions.COPY: {
+        // when copied a shape is stored in the clipboard variable.
+        // In order to undo it, just clear the clipboard variable.
+
+        MainComponent.clipboard = null;
 
         break;
       }
@@ -516,15 +513,6 @@ export class MainComponent implements OnInit, AfterViewInit {
     }
 
     switch (act.type) {
-      case Actions.UPD_LBL: {
-
-        break;
-      }
-
-      case Actions.HIDE: {
-
-        break;
-      }
 
       case Actions.ADD: {
         if (!act.alteredShape) {

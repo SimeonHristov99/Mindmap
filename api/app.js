@@ -7,7 +7,7 @@ const { mongoose } = require('./db/mongoose');
 const bodyParser = require('body-parser');
 
 // Load in the mongoose models.
-const { Document } = require('./db/models');
+const { Document, Shape } = require('./db/models');
 
 // Load middleware
 app.use(bodyParser.json());
@@ -61,7 +61,7 @@ app.post('/docs', (req, res) => {
 app.patch('/docs/:id', (req, res) => {
     // Update the specified document (with the id in the URL) with the new values specified in the JSON body of the request.
     Document.findOneAndUpdate({ _id: req.params.id }, {
-        $set: req.body // update the document using the request's bpdy
+        $set: req.body // update the document using the body of the request.
     }).then(() => {
         res.sendStatus(200);
     }).catch((err) => {

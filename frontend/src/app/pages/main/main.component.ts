@@ -464,19 +464,16 @@ export class MainComponent implements OnInit, AfterViewInit {
         }
 
         this.didAdd(act.alteredShape);
-
         break;
       }
 
       case Actions.ZOOM_OUT: {
         this.didZoomIn();
-
         break;
       }
 
       case Actions.ZOOM_IN: {
         this.didZoomOut();
-
         break;
       }
 
@@ -485,7 +482,6 @@ export class MainComponent implements OnInit, AfterViewInit {
         // In order to undo copying just clear the clipboard variable.
 
         MainComponent.clipboard = null;
-
         break;
       }
 
@@ -494,7 +490,7 @@ export class MainComponent implements OnInit, AfterViewInit {
         // In order to undo pasting remove the last shape in the array
         // and put it back in the clipboard variable.
 
-        let top: Shape | undefined = this.shapes.pop();
+        const top: Shape | undefined = this.shapes.pop();
 
         if (top) {
           MainComponent.clipboard = top;
@@ -533,7 +529,6 @@ export class MainComponent implements OnInit, AfterViewInit {
         }
 
         this.didAdd(act.alteredShape);
-
         break;
       }
 
@@ -543,29 +538,26 @@ export class MainComponent implements OnInit, AfterViewInit {
         }
 
         this.doRemove(this.shapes.indexOf(act.alteredShape));
-
         break;
       }
 
       case Actions.ZOOM_OUT: {
         this.didZoomOut();
-
         break;
       }
 
       case Actions.ZOOM_IN: {
         this.didZoomIn();
-
         break;
       }
 
       case Actions.COPY: {
-
+        this.copy();
         break;
       }
 
       case Actions.PASTE: {
-
+        this.paste();
         break;
       }
 

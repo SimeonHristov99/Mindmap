@@ -133,10 +133,9 @@
                     </button>
                 </p>
                 <ul class="menu-list">
-                    <a class="list-menu-item is-active">
-                        <p>Document 1</p>
-                    </a>
-                    <a class="list-menu-item" *ngFor="let doc of docs" [routerLink]="['/docs', doc._id]">
+                    <a class="list-menu-item" *ngFor="let doc of docs"
+                        [routerLink]="['/docs', doc._id]"
+                        routerLinkActive="is-active">
                         <p>{{ doc.title }}</p>
                     </a>
                 </ul>

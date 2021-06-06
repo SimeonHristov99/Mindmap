@@ -61,4 +61,15 @@ export class AuthService {
   logout(): void {
     this.removeSession();
   }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem('x-access-item');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('x-refresh-item');
+  }
+  setAccessToken(value: string): void {
+    localStorage.setItem('x-access-item', value);
+  }
 }

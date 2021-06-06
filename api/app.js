@@ -155,8 +155,13 @@ app.patch('/docs/:id', (req, res) => {
  */
 app.delete('/docs/:id', (req, res) => {
     // Delete the specified document (with the id in the URL)
-    Document.findOneAndRemove({ _id: req.params.id }).then((docToRemove) => {
+    Document.findOneAndRemove({
+        _id: req.params.id
+    }).then((docToRemove) => {
         res.send(docToRemove);
+
+        // delete all the shapes in the to be deleted document
+        deleteShapesFromDocument(docToRemove._id);
     })
 });
 
@@ -305,12 +310,15 @@ app.get('/users/me/access-token', verifySession, (req, res) => {
 
 
 
+//##############################################################################
+// HELPER METHODS
+//##############################################################################
 
-
-
-
-
-
+let deleteShapesFromDocument = (_docId) => {
+    Shape.deleteMany({
+        _docId
+    });
+}
 
 
 

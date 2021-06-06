@@ -263,12 +263,27 @@ app.patch('/docs/:docId/shapes/:shapeId', authenticate, (req, res) => {
  * DELETE /docs/:docId/shapes/:shapeId
  * Purpose: Delete a shape in a document.
  */
-app.delete('/docs/:docId/shapes/:shapeId', (req, res) => {
-    Shape.findOneAndRemove({
-        _id: req.params.shapeId,
-        _docId: req.params.docId
-    }).then((shapeToRemove) => {
-        res.send(shapeToRemove);
+app.delete('/docs/:docId/shapes/:shapeId', authenticate, (req, res) => {
+
+    Document.findOne({
+        _id: req.params.docId,
+        _userId: req.user_id
+    }).then((doc) => {
+        if (doc) {
+            return true;
+        }
+        return false;
+    }).then((canDeleteShapes) => {
+        if (canDeleteShapes) {
+            Shape.findOneAndRemove({
+                _id: req.params.shapeId,
+                _docId: req.params.docId
+            }).then((shapeToRemove) => {
+                res.send(shapeToRemove);
+            })
+        } else {
+            res.sendStatus(404); // Not found.
+        }
     })
 });
 

@@ -138,10 +138,13 @@ app.post('/docs', authenticate, (req, res) => {
  * PATCH /docs/:id
  * Purpose: Update a specified document.
  */
-app.patch('/docs/:id', (req, res) => {
+app.patch('/docs/:id', authenticate, (req, res) => {
     // Update the specified document (with the id in the URL) with
     // the new values specified in the JSON body of the request.
-    Document.findOneAndUpdate({ _id: req.params.id }, {
+    Document.findOneAndUpdate({
+        _id: req.params.id,
+        _userId: req.user_id
+    }, {
         $set: req.body // update the document using the body of the request.
     }).then(() => {
         res.sendStatus(200);

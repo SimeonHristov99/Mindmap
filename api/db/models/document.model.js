@@ -6,6 +6,11 @@ const DocumentSchema = new mongoose.Schema({
         required: true,
         minlength: 3,
         trim: true
+    },
+    // for auth
+    _userId: {
+        type: mongoose.Types.ObjectId,
+        required: true
     }
 })
 

@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 // Load in the mongoose models.
 const { Document, Shape, User } = require('./db/models');
+const jwt = require('jsonwebtoken');
 
 //##############################################################################
 // MIDDLEWARE
@@ -26,6 +27,22 @@ app.use(function (req, res, next) { // Copied from https://enable-cors.org/serve
     res.header("Access-Control-Expose-Headers", "x-access-token, x-refresh-token");
     next();
 });
+
+// check whether a request has a valid JWT access token
+let authenticate = (req, res, next) => {
+    let token = req.header('x-access-token');
+
+    jwt.verify(token, User.getJWTSecret(), (err, decoded) => {
+        if (err) {
+            // JWT is invalid
+            // => DO NOT AUTHENTICATE
+            res.status(401).send(err);
+        } else {
+            req.user_id = decoded._id;
+            next();
+        }
+    });
+}
 
 //##############################################
 // Verify Refresh Token (verify the session)
@@ -85,9 +102,12 @@ let verifySession = (req, res, next) => {
  * GET /docs
  * Purpose: Get all documents.
  */
-app.get('/docs', (req, res) => {
-    // Return an array of all the documents in the database.
-    Document.find().then((docs) => {
+app.get('/docs', authenticate, (req, res) => {
+    // Return an array of all the documents in the database
+    // that belong to the authenticated user.
+    Document.find({
+        _userId: req.user_id
+    }).then((docs) => {
         res.send(docs);
     }).catch((err) => {
         res.send(err);
@@ -100,7 +120,8 @@ app.get('/docs', (req, res) => {
  */
 app.post('/docs', (req, res) => {
     // Create a new document and return it alongside the user's id.
-    // The document information (fields) will be passed in via the JSON request body.
+    // The document information (fields) will
+    // be passed in via the JSON request body.
 
     let newDoc = new Document({
         title: req.body.title
@@ -117,7 +138,8 @@ app.post('/docs', (req, res) => {
  * Purpose: Update a specified document.
  */
 app.patch('/docs/:id', (req, res) => {
-    // Update the specified document (with the id in the URL) with the new values specified in the JSON body of the request.
+    // Update the specified document (with the id in the URL) with
+    // the new values specified in the JSON body of the request.
     Document.findOneAndUpdate({ _id: req.params.id }, {
         $set: req.body // update the document using the body of the request.
     }).then(() => {
@@ -145,7 +167,8 @@ app.delete('/docs/:id', (req, res) => {
 
 /**
  * GET /docs/:docId/tasks
- * Purpose: Get all shapes that belong to a specific document (specified by docId).
+ * Purpose: Get all shapes that belong
+ * to a specific document (specified by docId).
  */
 app.get('/docs/:docId/shapes', (req, res) => {
     Shape.find({
@@ -254,7 +277,7 @@ app.post('/users/login', (req, res) => {
             });
         }).then((authTokens) => {
             res
-                .header('x-access-token', authTokens.accessToken)
+                .header('x-access-token', authTokens.accToken)
                 .header('x-refresh-token', authTokens.refreshToken)
                 .send(user);
         });

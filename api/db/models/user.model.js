@@ -34,7 +34,9 @@ const UserSchema = new mongoose.Schema({
     }]
 });
 
-// *** Instance methods *** //
+//##############################################################################
+// INSTANCE METHODS
+//##############################################################################
 
 // modify the toJSON method so as to prevent the
 // sessions and password from being returned
@@ -105,7 +107,9 @@ UserSchema.statics.hasRefreshTokenExpired = (expiresAt) => {
 }
 
 
-// *** Middleware *** //
+//##############################################################################
+// MIDDLEWARE
+//##############################################################################
 
 // Before a user is saved, hash their password.
 UserSchema.pre('save', function (next) {
@@ -130,7 +134,11 @@ UserSchema.pre('save', function (next) {
 });
 
 
-// *** Model methods (static) *** //
+//##############################################################################
+// MODEL METHODS
+//##############################################################################
+
+UserSchema.statics.getJWTSecret = () => { return jwtSecret; }
 
 UserSchema.statics.findByIdAndToken = function (_id, token) {
     const User = this;
@@ -161,9 +169,9 @@ UserSchema.statics.findByCredentials = function (email, password) {
     })
 }
 
-
-
-// *** Helper methods *** //
+//##############################################################################
+// HELPER METHODS
+//##############################################################################
 
 let saveSessionToDatabase = (user, refreshToken) => {
     return new Promise((resolve, reject) => {

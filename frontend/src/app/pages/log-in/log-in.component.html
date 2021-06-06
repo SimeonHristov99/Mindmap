@@ -13,12 +13,12 @@
 
         <div class="column">
 
-            <form action="" class="box">
+            <div class="box">
 
                 <div class="field">
                     <label class="label">Email</label>
                     <div class="control has-icons-left has-icons-right">
-                        <input class="input has-background-light" type="email" placeholder="Email input">
+                        <input #emailInput class="input has-background-light" type="email" placeholder="Email input">
                         <span class="icon is-small is-left">
                             <i class="fas fa-envelope"></i>
                         </span>
@@ -28,7 +28,8 @@
                 <div class="field">
                     <label for="" class="label">Password</label>
                     <div class="control has-icons-left">
-                        <input class="input has-background-light" type="password" placeholder="*******" required>
+                        <input #passwordInput class="input has-background-light" type="password" placeholder="*******"
+                            required>
                         <span class="icon is-small is-left">
                             <i class="fa fa-lock"></i>
                         </span>
@@ -36,14 +37,17 @@
                 </div>
 
                 <div class="field pt-4 pb-4">
-                    <button class="button is-medium is-fullwidth is-success">Log in</button>
+                    <button class="button is-medium is-fullwidth is-success"
+                        (click)="btnLoginOnAction(emailInput.value, passwordInput.value)">
+                        Log in
+                    </button>
                 </div>
 
                 <div>
                     Don't have an account? <a href="signup">Sign up now</a>.
                 </div>
-                
-            </form>
+
+            </div>
         </div>
 
         <div class="column" id="right-pic">

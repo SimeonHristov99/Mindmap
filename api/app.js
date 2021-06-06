@@ -199,8 +199,8 @@ app.post('/docs/:docId/shapes', authenticate, (req, res) => {
     Document.findOne({
         _id: req.params.docId,
         _userId: req.user_id
-    }).then((user) => {
-        if (user) {
+    }).then((doc) => {
+        if (doc) {
             return true;
         }
         return false;
@@ -232,15 +232,30 @@ app.post('/docs/:docId/shapes', authenticate, (req, res) => {
  * PATCH /docs/:docId/shapes/:shapeId
  * Purpose: Update an existing shape (specified by shapeId).
  */
-app.patch('/docs/:docId/shapes/:shapeId', (req, res) => {
-    Shape.findOneAndUpdate({
-        _id: req.params.shapeId,
-        _docId: req.params.docId
-    }, {
-        $set: req.body
-    }
-    ).then(() => {
-        res.sendStatus({ message: 'Updated successfully.' });
+app.patch('/docs/:docId/shapes/:shapeId', authenticate, (req, res) => {
+
+    Document.findOne({
+        _id: req.params.docId,
+        _userId: req.user_id
+    }).then((doc) => {
+        if (doc) {
+            return true;
+        }
+        return false;
+    }).then((canUpdateShapes) => {
+        if (canUpdateShapes) {
+            Shape.findOneAndUpdate({
+                _id: req.params.shapeId,
+                _docId: req.params.docId
+            }, {
+                $set: req.body
+            }
+            ).then(() => {
+                res.send({ message: 'Updated successfully.' });
+            })
+        } else {
+            res.sendStatus(404); // Not found.
+        }
     })
 });
 

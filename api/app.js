@@ -118,13 +118,14 @@ app.get('/docs', authenticate, (req, res) => {
  * POST /docs
  * Purpose: Create a list.
  */
-app.post('/docs', (req, res) => {
+app.post('/docs', authenticate, (req, res) => {
     // Create a new document and return it alongside the user's id.
     // The document information (fields) will
     // be passed in via the JSON request body.
 
     let newDoc = new Document({
-        title: req.body.title
+        title: req.body.title,
+        _userId: req.user_id
     });
 
     newDoc.save().then((doc) => {

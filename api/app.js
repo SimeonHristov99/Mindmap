@@ -180,7 +180,7 @@ app.delete('/docs/:id', authenticate, (req, res) => {
  * Purpose: Get all shapes that belong
  * to a specific document (specified by docId).
  */
-app.get('/docs/:docId/shapes', (req, res) => {
+app.get('/docs/:docId/shapes', authenticate, (req, res) => {
     Shape.find({
         _docId: req.params.docId
     }).then((shapes) => {

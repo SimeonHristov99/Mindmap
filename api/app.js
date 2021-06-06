@@ -188,25 +188,43 @@ app.get('/docs/:docId/shapes', authenticate, (req, res) => {
     })
 });
 
+
+
+// Sharing will happen here I suppose.
 /**
  * POST /docs
  * Purpose: Create a new shape in a specific document (specified by docId).
  */
-app.post('/docs/:docId/shapes', (req, res) => {
-    let newShape = new Shape({
-        _docId: req.params.docId,
-        id: req.body.id,
-        type: req.body.type,
-        label: req.body.label,
-        translateX: req.body.translateX,
-        translateY: req.body.translateY,
-        backgroundColor: req.body.backgroundColor,
-        textColor: req.body.textColor,
-        borderColor: req.body.borderColor,
-    });
+app.post('/docs/:docId/shapes', authenticate, (req, res) => {
+    Document.findOne({
+        _id: req.params.docId,
+        _userId: req.user_id
+    }).then((user) => {
+        if (user) {
+            return true;
+        }
+        return false;
+    }).then((canCreateShapes) => {
+        if (canCreateShapes) {
 
-    newShape.save().then((doc) => {
-        res.send(doc);
+            let newShape = new Shape({
+                _docId: req.params.docId,
+                id: req.body.id,
+                type: req.body.type,
+                label: req.body.label,
+                translateX: req.body.translateX,
+                translateY: req.body.translateY,
+                backgroundColor: req.body.backgroundColor,
+                textColor: req.body.textColor,
+                borderColor: req.body.borderColor,
+            });
+
+            newShape.save().then((doc) => {
+                res.send(doc);
+            })
+        } else {
+            res.sendStatus(404); // Not found.
+        }
     })
 });
 

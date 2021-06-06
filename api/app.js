@@ -157,10 +157,11 @@ app.patch('/docs/:id', authenticate, (req, res) => {
  * DELETE /docs/:id
  * Purpose: Delete a document.
  */
-app.delete('/docs/:id', (req, res) => {
+app.delete('/docs/:id', authenticate, (req, res) => {
     // Delete the specified document (with the id in the URL)
     Document.findOneAndRemove({
-        _id: req.params.id
+        _id: req.params.id,
+        _userId: req.user_id
     }).then((docToRemove) => {
         res.send(docToRemove);
 

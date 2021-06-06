@@ -7,8 +7,8 @@ import { NewDocumentComponent } from './pages/new-document/new-document.componen
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/docs' },
-  { path: 'log-in', component: LogInComponent },
-  { path: 'sign-up', component: SignUpComponent },
+  { path: 'login', component: LogInComponent },
+  { path: 'signup', component: SignUpComponent },
   { path: 'new-document', component: NewDocumentComponent },
   { path: 'docs', component: MainComponent },
   { path: 'docs/:docId', component: MainComponent },

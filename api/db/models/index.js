@@ -2,8 +2,10 @@
 
 const { Document } = require('./document.model');
 const { Shape } = require('./shape.model');
+const { User } = require('./user.model');
 
 module.exports = {
     Document,
-    Shape
+    Shape,
+    User
 }

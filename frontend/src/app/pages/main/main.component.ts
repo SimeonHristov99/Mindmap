@@ -32,28 +32,6 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
   private static actionsRedo: Action[] = [];
   private static subscriptions: Subscription[] = [];
 
-  testShapes: Shape[] = [
-    {
-      id: 0,
-      type: 'ellipse',
-      label: 'Trapped 1',
-      translateX: 113,
-      translateY: 201,
-      backgroundColor: '#C02B2B',
-      textColor: '#f3f3f3',
-      borderColor: 'green'
-    },
-    {
-      id: 1,
-      type: 'ellipse',
-      label: 'Trapped 2',
-      translateX: 421,
-      translateY: 354,
-      backgroundColor: '#f3f3f3',
-      textColor: '#C02B2B',
-      borderColor: 'black'
-    },
-  ];
   shapes: Shape[] = [];
   docs: any;
   currentDocName = '';
@@ -125,7 +103,7 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private didAdd(shape: Shape): void {
     MainComponent.currentShapeIndex = this.shapes.length - 1;
-    
+
     MainComponent.subscriptions.push(this.docServ.createShape(this.docId,
       shape.id,
       shape.type,

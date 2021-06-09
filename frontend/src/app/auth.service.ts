@@ -3,6 +3,7 @@ import { WebRequestService } from './web-request.service';
 import { shareReplay, tap } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 import { Observable, OperatorFunction } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export class AuthService {
 
   constructor(
     private webService: WebRequestService,
+    private router: Router
   ) { }
 
   /**
@@ -38,7 +40,7 @@ export class AuthService {
    *
    * @param[in] password
    *     This is the provided password.
-   * 
+   *
    * @returns
    *     The object returned from the database wrapped in an Observable.
    */
@@ -60,6 +62,8 @@ export class AuthService {
 
   logout(): void {
     this.removeSession();
+
+    this.router.navigateByUrl('/login');
   }
 
   getAccessToken(): string | null {

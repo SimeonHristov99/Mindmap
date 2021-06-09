@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 export class WebReqInterceptor implements HttpInterceptor {
 
   private addAuthHeader(request: HttpRequest<any>): HttpRequest<any> {
-    // get the access token
+    // add the access token to each request
     const token = this.authService.getAccessToken();
 
     if (token) {
@@ -33,10 +33,16 @@ export class WebReqInterceptor implements HttpInterceptor {
     // call next() and handle the response
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
-        console.log(err);
+        // console.log(err);
+
+        if (err.status === 401) { // unauthorised
+
+
+          this.authService.logout();
+        }
 
         return throwError(err);
       })
-    )
+    );
   }
 }

@@ -11,6 +11,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NewDocumentComponent } from './pages/new-document/new-document.component';
 import { DraggableModule } from './draggable/draggable.module';
 import { WebReqInterceptor } from './web-req.interceptor';
+import { HeroGreetingComponent } from './pageHelpers/hero-greeting/hero-greeting.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { WebReqInterceptor } from './web-req.interceptor';
     SignUpComponent,
     MainComponent,
     NewDocumentComponent,
+    HeroGreetingComponent,
   ],
   imports: [
     BrowserModule,

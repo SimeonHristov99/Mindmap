@@ -32,41 +32,6 @@ export class AuthService {
     private http: HttpClient,
   ) { }
 
-  /**
-   * This method checks the passed in credentials and logs the user in,
-   * if they are valid.
-   *
-   * @param[in] email
-   *     This is the provided email.
-   *
-   * @param[in] password
-   *     This is the provided password.
-   *
-   * @returns
-   *     The object returned from the database wrapped in an Observable.
-   */
-  login(email: string, password: string): Observable<object> {
-    return this.webService.login(email, password).pipe(
-      shareReplay() as OperatorFunction<object, HttpResponse<any>>,
-      tap((res: HttpResponse<any>) => {
-
-        this.setSession(
-          res.body._id,
-          res.headers.get('x-access-token'),
-          res.headers.get('x-refresh-token'),
-        );
-
-        console.log('LOGGED IN!');
-      })
-    );
-  }
-
-  logout(): void {
-    this.removeSession();
-
-    this.router.navigateByUrl('/login');
-  }
-
   getUserId(): string | null {
     return localStorage.getItem('user-id');
   }
@@ -110,4 +75,71 @@ export class AuthService {
   setAccessToken(value: string): void {
     localStorage.setItem('x-access-token', value);
   }
+
+  /**
+   * This method checks the passed in credentials and logs the user in,
+   * if they are valid.
+   *
+   * @param[in] email
+   *     This is the provided email.
+   *
+   * @param[in] password
+   *     This is the provided password.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  login(email: string, password: string): Observable<object> {
+    return this.webService.login(email, password).pipe(
+      shareReplay() as OperatorFunction<object, HttpResponse<any>>,
+      tap((res: HttpResponse<any>) => {
+
+        this.setSession(
+          res.body._id,
+          res.headers.get('x-access-token'),
+          res.headers.get('x-refresh-token'),
+        );
+
+        console.log('LOGGED IN!');
+      })
+    );
+  }
+
+  logout(): void {
+    this.removeSession();
+
+    this.router.navigateByUrl('/login');
+  }
+
+  /**
+   * This method checks the passed in credentials and creates
+   * an account for the user if they are valid.
+   *
+   * @param[in] email
+   *     This is the provided email.
+   *
+   * @param[in] password
+   *     This is the provided password.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+
+  signup(email: string, password: string): Observable<object> {
+    return this.webService.signup(email, password).pipe(
+      shareReplay() as OperatorFunction<object, HttpResponse<any>>,
+      tap((res: HttpResponse<any>) => {
+
+        this.setSession(
+          res.body._id,
+          res.headers.get('x-access-token'),
+          res.headers.get('x-refresh-token'),
+        );
+
+        console.log('Successfully signed up and now logged in!');
+      })
+    );
+  }
+
+
 }

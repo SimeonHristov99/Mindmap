@@ -90,8 +90,20 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    *      This is the index, the element at which has to be removed.
    */
   private doRemove(idx: number): void {
-    this.shapes.splice(idx, 1);
-    MainComponent.currentShapeIndex = -1;
+    const shapeDBId: string | undefined = this.shapes[idx]._id;
+
+    if (shapeDBId === undefined) {
+      return;
+    }
+
+    MainComponent.subscriptions.push(
+      this.docServ.deleteShape(this.docId, shapeDBId).subscribe(
+        (res: object) => {
+          console.log(res);
+          this.shapes.splice(idx, 1);
+          MainComponent.currentShapeIndex = -1;
+        })
+    );
   }
 
   /**
@@ -113,8 +125,8 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
       shape.label,
       shape.backgroundColor,
       shape.textColor,
-      ).subscribe((newShape: object) => {
-        this.shapes.push(newShape as Shape);
+    ).subscribe((newShape: object) => {
+      this.shapes.push(newShape as Shape);
     }));
   }
 

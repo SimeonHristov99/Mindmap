@@ -136,4 +136,22 @@ export class DocumentService {
       borderColor
     });
   }
+
+  /**
+   * This method sends a web request to
+   * delete a shape (specified by an id)
+   * from a document (specified by an id).
+   *
+   * @param[in] docId
+   *      The id of the document where the shape to be deleted is.
+   *
+   * @param[in] shapeId
+   *      The id of the shape to be deleted.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  deleteShape(docId: string, shapeId: string): Observable<object> {
+    return this.webReqServ.delete(`docs/${docId}/shapes/${shapeId}`);
+  }
 }

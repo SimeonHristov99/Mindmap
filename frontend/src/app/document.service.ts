@@ -138,6 +138,68 @@ export class DocumentService {
   }
 
   /**
+   * This method sends a web request to update
+   * a new shape in a given document.
+   *
+   * @param docId
+   *     This is the id of the doument in which
+   *     the new shape has to be created.
+   *
+   * @param id
+   *     This is the id of the shape
+   *     as it was stored in the shapes array.
+   *
+   * @param type
+   *     This is the type/geometric interpretation of the shape.
+   *
+   * @param label
+   *     This is the label of the shape (if any).
+   *
+   * @param translateX
+   *     This is the position to which the shape has to be moved
+   *     on the X axis.
+   *
+   * @param translateY
+   *     This is the position to which the shape has to be moved
+   *     on the Y axis.
+   *
+   * @param backgroundColor
+   *     This is the last set background color.
+   *
+   * @param textColor
+   *     This is the last set text color.
+   *
+   * @param borderColor
+   *     This is the last set border color.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  updateShape(
+    docId: string,
+    shapeId: string,
+    id: number,
+    type: string,
+    translateX: number,
+    translateY: number,
+    borderColor: string,
+    label?: string,
+    backgroundColor?: string,
+    textColor?: string,
+  ): Observable<object> {
+    return this.webReqServ.patch(`docs/${docId}/shapes/${shapeId}`, {
+      id,
+      type,
+      label,
+      translateX,
+      translateY,
+      backgroundColor,
+      textColor,
+      borderColor
+    });
+  }
+
+  /**
    * This method sends a web request to
    * delete a shape (specified by an id)
    * from a document (specified by an id).

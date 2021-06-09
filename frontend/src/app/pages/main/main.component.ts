@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { DocumentService } from 'src/app/document.service';
 import { Shape } from 'src/app/models/shape.model';
 
@@ -90,20 +91,8 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    *      This is the index, the element at which has to be removed.
    */
   private doRemove(idx: number): void {
-    const shapeDBId: string | undefined = this.shapes[idx]._id;
-
-    if (shapeDBId === undefined) {
-      return;
-    }
-
-    MainComponent.subscriptions.push(
-      this.docServ.deleteShape(this.docId, shapeDBId).subscribe(
-        (res: object) => {
-          console.log(res);
-          this.shapes.splice(idx, 1);
-          MainComponent.currentShapeIndex = -1;
-        })
-    );
+    this.shapes.splice(idx, 1);
+    MainComponent.currentShapeIndex = -1;
   }
 
   /**
@@ -114,20 +103,8 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    *      This is the shape to be added to the shapes array.
    */
   private didAdd(shape: Shape): void {
+    this.shapes.push(shape);
     MainComponent.currentShapeIndex = this.shapes.length - 1;
-
-    MainComponent.subscriptions.push(this.docServ.createShape(this.docId,
-      shape.id,
-      shape.type,
-      shape.translateX,
-      shape.translateY,
-      shape.borderColor,
-      shape.label,
-      shape.backgroundColor,
-      shape.textColor,
-    ).subscribe((newShape: object) => {
-      this.shapes.push(newShape as Shape);
-    }));
   }
 
   constructor(
@@ -148,9 +125,7 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    MainComponent.subscriptions.forEach(sub => {
-      sub.unsubscribe();
-    });
+    MainComponent.subscriptions.forEach(s => s.unsubscribe());
   }
 
   ngOnInit(): void {
@@ -298,6 +273,9 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    *     noting is created and hense, nothing is rendered.
    */
   add(what: string): void {
+    if (this.docId.length === 0) {
+      return;
+    }
 
     let newShape: Shape;
 
@@ -333,6 +311,7 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
+    console.log(this.docId);
     this.didAdd(newShape);
 
     MainComponent.actionsUndo.push({
@@ -352,6 +331,7 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
     if (
       MainComponent.currentShapeIndex < 0
       || MainComponent.currentShapeIndex >= this.shapes.length
+      || this.docId.length === 0
     ) {
       return;
     }
@@ -573,13 +553,92 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * This method gets called when the user
+   * clicks on the delete text that is part of the
+   * dropdown menu in the upper-right corner.
+   * It calls the web request service to delete the currently
+   * selected document.
+   */
   btnDeleteOnClick(): void {
     MainComponent.subscriptions.push(
       this.docServ.deleteDocument(this.docId).subscribe((res: object) => {
-        this.router.navigateByUrl('/docs');
         console.log(res);
+        this.docId = '';
+        this.router.navigateByUrl('/docs');
       })
     );
+  }
+
+  /**
+   * This method gets called when the user clicks on the
+   * "save icon" that is part of the top-level navbar.
+   * It calls a web request service to
+   * save all the shapes to the database.
+   */
+  btnSaveOnAction(): void {
+    const allIds: string[] = []
+
+    this.shapes.forEach(s => {
+
+      if (s._id) {
+
+        allIds.push(s._id);
+
+        this.docServ.updateShape(
+          this.docId,
+          s._id,
+          s.id,
+          s.type,
+          s.translateX,
+          s.translateY,
+          s.borderColor,
+          s.label,
+          s.backgroundColor,
+          s.textColor,
+        ).pipe(take(1)).subscribe((updatedShape) => {
+          console.log('UPDATED successfuly');
+        });
+
+      } else {
+        console.log("CREATE ME");
+      }
+
+      // this.docServ.getShapes(this.docId).pipe(take(1)).subscribe((shapes: object) => {
+
+      //   (shapes as Shape[]).forEach((shape: Shape) => {
+
+      //     if (shape._id !== undefined) {
+      //       allIds.splice()
+      //     }
+      //   });
+      // });
+
+
+      // if (allIds.includes(s._id)) {
+      //   allIds.splice(allIds.indexOf(s._id), 1);
+      // }
+
+      // MainComponent.subscriptions.push(this.docServ.createShape(this.docId,
+      //   shape.id,
+      //   shape.type,
+      //   shape.translateX,
+      //   shape.translateY,
+      //   shape.borderColor,
+      //   shape.label,
+      //   shape.backgroundColor,
+      //   shape.textColor,
+      // ).subscribe((newShape: object) => {
+      // }));
+
+    });
+
+    console.log(allIds.length);
+
+    allIds.forEach(id => this.docServ.deleteShape(this.docId, id).pipe(
+      take(1)).subscribe((deletedShape) => {
+        console.log(deletedShape);
+      }));
   }
 
   // this part holds resizing

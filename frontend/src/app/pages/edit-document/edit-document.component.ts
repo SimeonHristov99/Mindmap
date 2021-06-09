@@ -15,7 +15,7 @@ export class EditDocumentComponent implements OnInit, OnDestroy {
     private docServ: DocumentService,
     private router: Router,
   ) { }
-  
+
   private static subscriptions: Subscription[] = [];
 
   private docId = '';
@@ -27,10 +27,14 @@ export class EditDocumentComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    EditDocumentComponent.subscriptions.forEach((s) => { s.unsubscribe(); });
+    EditDocumentComponent.subscriptions.forEach(s => s.unsubscribe());
   }
 
   updateDocument(title: string): void {
+    if (this.docId.length === 0) {
+      return;
+    }
+
     EditDocumentComponent.subscriptions.push(
       this.docServ.updateDocument(this.docId, title).subscribe(() => {
         this.router.navigateByUrl(`/docs/${this.docId}`);

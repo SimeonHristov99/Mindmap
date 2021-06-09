@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DocumentService } from 'src/app/document.service';
 import { Shape } from 'src/app/models/shape.model';
 
@@ -22,13 +23,14 @@ interface Action {
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
 })
-export class MainComponent implements OnInit, AfterViewInit {
+export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private static scalingFactor = 1;
   private static clipboard: Shape | null = null;
   private static currentShapeIndex = -1;
   private static actionsUndo: Action[] = [];
   private static actionsRedo: Action[] = [];
+  private static subscriptions: Subscription[] = [];
 
   testShapes: Shape[] = [
     {
@@ -122,10 +124,9 @@ export class MainComponent implements OnInit, AfterViewInit {
    *      This is the shape to be added to the shapes array.
    */
   private didAdd(shape: Shape): void {
-    this.shapes.push(shape);
     MainComponent.currentShapeIndex = this.shapes.length - 1;
-
-    this.docServ.createShape(this.docId,
+    
+    MainComponent.subscriptions.push(this.docServ.createShape(this.docId,
       shape.id,
       shape.type,
       shape.translateX,
@@ -134,8 +135,9 @@ export class MainComponent implements OnInit, AfterViewInit {
       shape.label,
       shape.backgroundColor,
       shape.textColor,
-    ).subscribe((newShape: object) => {
-    });
+      ).subscribe((newShape: object) => {
+        this.shapes.push(newShape as Shape);
+    }));
   }
 
   constructor(
@@ -154,20 +156,26 @@ export class MainComponent implements OnInit, AfterViewInit {
     this.middleColumnRef = middleColumnRef;
   }
 
-  ngOnInit(): void {
-    this.docServ.getDocs().subscribe((docs: any) => {
-      this.docs = docs;
+  ngOnDestroy(): void {
+    MainComponent.subscriptions.forEach(sub => {
+      sub.unsubscribe();
     });
+  }
 
-    this.route.params.subscribe((params: Params) => {
+  ngOnInit(): void {
+    MainComponent.subscriptions.push(this.docServ.getDocs().subscribe((docs: any) => {
+      this.docs = docs;
+    }));
+
+    MainComponent.subscriptions.push(this.route.params.subscribe((params: Params) => {
       if (params.docId) {
         this.docId = params.docId;
 
-        this.docServ.getShapes(params.docId).subscribe((shapes: any) => {
+        MainComponent.subscriptions.push(this.docServ.getShapes(params.docId).subscribe((shapes: any) => {
           this.shapes = shapes;
-        });
+        }));
       }
-    });
+    }));
 
     this.labelValueRef.nativeElement.addEventListener('input', () => {
       if (
@@ -216,6 +224,7 @@ export class MainComponent implements OnInit, AfterViewInit {
 
       this.shapes[MainComponent.currentShapeIndex].borderColor = this.borderColorRef.nativeElement.value;
     }, false);
+
   }
 
 

@@ -13,8 +13,8 @@ export class AuthService {
   private setSession(userId: string, accessToken: string | null, refreshToken: string | null): void {
     if (accessToken && refreshToken) {
       localStorage.setItem('user-id', userId);
-      localStorage.setItem('access-token', accessToken);
-      localStorage.setItem('refresh-token', refreshToken);
+      localStorage.setItem('x-access-token', accessToken);
+      localStorage.setItem('x-refresh-token', refreshToken);
     } else {
       alert('AuthService: Error in setSession!');
     }
@@ -22,8 +22,8 @@ export class AuthService {
 
   private removeSession(): void {
     localStorage.removeItem('user-id');
-    localStorage.removeItem('access-token');
-    localStorage.removeItem('refresh-token');
+    localStorage.removeItem('x-access-token');
+    localStorage.removeItem('x-refresh-token');
   }
 
   constructor(
@@ -67,13 +67,14 @@ export class AuthService {
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem('x-access-item');
+    return localStorage.getItem('x-access-token');
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('x-refresh-item');
+    return localStorage.getItem('x-refresh-token');
   }
+  
   setAccessToken(value: string): void {
-    localStorage.setItem('x-access-item', value);
+    localStorage.setItem('x-access-token', value);
   }
 }

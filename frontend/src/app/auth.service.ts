@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { shareReplay, tap } from 'rxjs/operators';
-import { HttpResponse } from '@angular/common/http';
-import { Observable, OperatorFunction } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { EMPTY, empty, Observable, OperatorFunction, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -28,7 +28,8 @@ export class AuthService {
 
   constructor(
     private webService: WebRequestService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
   ) { }
 
   /**
@@ -66,14 +67,46 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
+  getUserId(): string | null {
+    return localStorage.getItem('user-id');
+  }
+
   getAccessToken(): string | null {
     return localStorage.getItem('x-access-token');
+  }
+
+  getNewAccessToken(): Observable<object> {
+    const refreshToken: string | null = this.getRefreshToken();
+    const id: string | null = this.getUserId();
+
+    if (refreshToken && id) {
+
+      return this.http.get(`${this.webService.ROOT_URL}/users/me/access-token`, {
+        headers: {
+          'x-refresh-token': refreshToken,
+          '_id': id
+        },
+        observe: 'response'
+      }).pipe(
+        tap((res: HttpResponse<any>) => {
+          const accToken: string | null = res.headers.get('x-access-token');
+
+          if (accToken) {
+            this.setAccessToken(accToken);
+          }
+
+        })
+      );
+
+    }
+
+    return throwError('No token or ID');
   }
 
   getRefreshToken(): string | null {
     return localStorage.getItem('x-refresh-token');
   }
-  
+
   setAccessToken(value: string): void {
     localStorage.setItem('x-access-token', value);
   }

@@ -24,13 +24,42 @@ export class DocumentService {
    * This method sends a web request to create a new document.
    *
    * @param[in] title
-   *     The name of the new document.
+   *     The name of the new document to be created.
    *
    * @returns
    *     The object returned from the database wrapped in an Observable.
    */
   createDocument(title: string): Observable<object> {
     return this.webReqServ.post('docs', { title });
+  }
+
+  /**
+   * This method sends a web request to
+   * update the name of an existing document (specified by an id).
+   *
+   * @param[in] id
+   *     The id of the document to have its name changed.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  updateDocument(id: string, title: string): Observable<object> {
+    // return this.webReqServ.post('docs', { title });
+    return this.webReqServ.patch(`docs/${id}`, { title });
+  }
+
+  /**
+   * This method sends a web request to
+   * delete a new document (specified by an id).
+   *
+   * @param[in] id
+   *     The id of the new document to be deleted.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  deleteDocument(id: string): Observable<object> {
+    return this.webReqServ.delete(`docs/${id}`);
   }
 
   /**

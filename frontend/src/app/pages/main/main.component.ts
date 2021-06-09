@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DocumentService } from 'src/app/document.service';
 import { Shape } from 'src/app/models/shape.model';
@@ -35,7 +35,7 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
   shapes: Shape[] = [];
   docs: any;
   currentDocName = '';
-  private docId = '';
+  docId = '';
 
   @ViewChild('labelValue', { static: true }) labelValueRef: ElementRef;
   @ViewChild('fillColor', { static: true }) fillColorRef: ElementRef;
@@ -126,6 +126,7 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
     borderColorRef: ElementRef,
     textColorRef: ElementRef,
     middleColumnRef: ElementRef,
+    private router: Router,
   ) {
     this.labelValueRef = labelValueRef;
     this.fillColorRef = fillColorRef;
@@ -558,6 +559,15 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
     }
+  }
+
+  btnDeleteOnClick(): void {
+    MainComponent.subscriptions.push(
+      this.docServ.deleteDocument(this.docId).subscribe((res: object) => {
+        this.router.navigateByUrl('/docs');
+        console.log(res);
+      })
+    );
   }
 
   // this part holds resizing

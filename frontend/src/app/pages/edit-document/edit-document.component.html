@@ -1,7 +1,7 @@
 <div class="centered-content">
     <div class="modal-box">
 
-        <h1 class="title">Create a new document</h1>
+        <h1 class="title">Edit a document</h1>
 
         <input #docTitleInput class="input has-background-light is-medium" type="text"
             placeholder="Enter a name, eg. Project Vulkan">
@@ -11,7 +11,7 @@
         <div class="buttons is-right">
             <button class="button is-medium" routerLink="/docs">Cancel</button>
             <button class="button is-medium is-primary has-text-white"
-                (click)="createDocument(docTitleInput.value)">Create</button>
+                (click)="updateDocument(docTitleInput.value)">Save</button>
         </div>
 
     </div>

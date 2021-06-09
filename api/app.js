@@ -148,7 +148,7 @@ app.patch('/docs/:id', authenticate, (req, res) => {
     }, {
         $set: req.body // update the document using the body of the request.
     }).then(() => {
-        res.sendStatus(200);
+        res.send({ 'message': 'document updated successfully' });;
     }).catch((err) => {
         console.log(err);
     });

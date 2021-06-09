@@ -12,6 +12,7 @@ import { NewDocumentComponent } from './pages/new-document/new-document.componen
 import { DraggableModule } from './draggable/draggable.module';
 import { WebReqInterceptor } from './web-req.interceptor';
 import { HeroGreetingComponent } from './pageHelpers/hero-greeting/hero-greeting.component';
+import { EditDocumentComponent } from './pages/edit-document/edit-document.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { HeroGreetingComponent } from './pageHelpers/hero-greeting/hero-greeting
     MainComponent,
     NewDocumentComponent,
     HeroGreetingComponent,
+    EditDocumentComponent,
   ],
   imports: [
     BrowserModule,

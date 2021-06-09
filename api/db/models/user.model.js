@@ -54,7 +54,7 @@ UserSchema.methods.generateAccessAuthToken = function () {
         // Create the JWT and return it.
         jwt.sign({ _id: user._id.toHexString() },
             jwtSecret,
-            { expiresIn: "10s" },
+            { expiresIn: "15m" },
             (err, token) => {
                 if (!err) {
                     resolve(token);

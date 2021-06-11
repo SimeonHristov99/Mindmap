@@ -12,10 +12,6 @@ export class WebReqInterceptor implements HttpInterceptor, OnDestroy {
 
   constructor(private authService: AuthService) { }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
   private refreshingAccessToken = false;
   private subscription: Subscription = new Subscription();
 
@@ -31,6 +27,10 @@ export class WebReqInterceptor implements HttpInterceptor, OnDestroy {
    */
 
   accessTokenRefreshed: Subject<any> = new Subject();
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
   private addAuthHeader(request: HttpRequest<any>): HttpRequest<any> {
     // add the access token to each request

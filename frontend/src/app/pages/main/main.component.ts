@@ -37,6 +37,7 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
   docs: any;
   currentDocName = '';
   docId = '';
+  isSaving = false;
 
   @ViewChild('labelValue', { static: true }) labelValueRef: ElementRef;
   @ViewChild('fillColor', { static: true }) fillColorRef: ElementRef;
@@ -577,12 +578,14 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    * save all the shapes to the database.
    */
   btnSaveOnAction(): void {
-    const allIds: string[] = []
+    const allIds: string[] = [];
+    let allShapes: Shape[] = [];
+
+    this.isSaving = true;
 
     this.shapes.forEach(s => {
-
-      if (s._id) {
-
+      if (s._id) { // This has an entry in the database.
+        // console.log('PATCH ME');
         allIds.push(s._id);
 
         this.docServ.updateShape(
@@ -597,48 +600,57 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
           s.backgroundColor,
           s.textColor,
         ).pipe(take(1)).subscribe((updatedShape) => {
-          console.log('UPDATED successfuly');
+          // console.log('UPDATED successfuly');
         });
-
       } else {
-        console.log("CREATE ME");
+        // console.log('POST ME');
+        this.docServ.createShape(
+          this.docId,
+          s.id,
+          s.type,
+          s.translateX,
+          s.translateY,
+          s.borderColor,
+          s.label,
+          s.backgroundColor,
+          s.textColor,
+        ).pipe(take(1)).subscribe((createdShape) => {
+          // console.log('CREATED successfuly');
+          const newShape = (createdShape as Shape);
+
+          if (newShape._id) {
+            allIds.push(newShape._id);
+          }
+        });
       }
-
-      // this.docServ.getShapes(this.docId).pipe(take(1)).subscribe((shapes: object) => {
-
-      //   (shapes as Shape[]).forEach((shape: Shape) => {
-
-      //     if (shape._id !== undefined) {
-      //       allIds.splice()
-      //     }
-      //   });
-      // });
-
-
-      // if (allIds.includes(s._id)) {
-      //   allIds.splice(allIds.indexOf(s._id), 1);
-      // }
-
-      // MainComponent.subscriptions.push(this.docServ.createShape(this.docId,
-      //   shape.id,
-      //   shape.type,
-      //   shape.translateX,
-      //   shape.translateY,
-      //   shape.borderColor,
-      //   shape.label,
-      //   shape.backgroundColor,
-      //   shape.textColor,
-      // ).subscribe((newShape: object) => {
-      // }));
-
     });
 
-    console.log(allIds.length);
+    setTimeout(() => {
+      MainComponent.subscriptions.push(
+        this.docServ.getShapes(this.docId).subscribe((shapes: object) => {
+          allShapes = shapes as Shape[];
+        })
+      );
+    }, 3000);
 
-    allIds.forEach(id => this.docServ.deleteShape(this.docId, id).pipe(
-      take(1)).subscribe((deletedShape) => {
-        console.log(deletedShape);
-      }));
+    setTimeout(() => {
+      const dbIds = allShapes.map(s => s._id);
+
+      allIds.forEach(id => {
+        if (dbIds.includes(id)) {
+          dbIds.splice(dbIds.indexOf(id), 1);
+        }
+      });
+
+      // console.log('NOT IN DB:' + dbIds.length);
+
+      dbIds.forEach(id => this.docServ.deleteShape(this.docId, id!).pipe(
+        take(1)).subscribe((deletedShape) => {
+          // console.log(deletedShape);
+        }));
+
+      this.isSaving = false;
+    }, 4000);
   }
 
   // this part holds resizing

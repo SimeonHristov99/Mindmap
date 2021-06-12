@@ -48,7 +48,7 @@ export class AuthService {
       return this.http.get(`${this.webService.ROOT_URL}/users/me/access-token`, {
         headers: {
           'x-refresh-token': refreshToken,
-          '_id': id
+          _id: id
         },
         observe: 'response'
       }).pipe(
@@ -141,5 +141,20 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
+  /**
+   * This method removes the user,
+   * their documents and the shapes they have created
+   * from the database.
+   *
+   * @param[in] userId
+   *     The id of the user to be deleted.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  delete(): Observable<object> {
+    const userId = localStorage.getItem('user-id');
+    return this.webService.delete(`users/${userId}`);
+  }
 
 }

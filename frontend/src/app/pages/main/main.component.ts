@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -674,6 +675,9 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    * redirected to the 'Sign up' page.
    */
   btnDeleteAccountOnClick(): void {
+    this.authServ.delete().pipe(take(1)).subscribe((res: any) => {
+      console.log(res as HttpResponse<any>);
+    });
     this.router.navigateByUrl('signup');
   }
 

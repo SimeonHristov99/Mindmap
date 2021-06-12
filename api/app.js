@@ -298,7 +298,8 @@ app.delete('/docs/:docId/shapes/:shapeId', authenticate, (req, res) => {
 
 /**
  * GET /users
- * Purpose: Get all users.
+ * Purpose: Get all users but the one that
+ * makes the request.
  */
 app.get('/users/:id', authenticate, (req, res) => {
     User.find({

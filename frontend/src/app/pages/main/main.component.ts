@@ -581,6 +581,10 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    * save all the shapes to the database.
    */
   btnSaveOnAction(): void {
+    if (this.docId.length === 0) {
+      return;
+    }
+
     const allIds: string[] = [];
     let allShapes: Shape[] = [];
 
@@ -681,14 +685,14 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigateByUrl('signup');
   }
 
-  /**
-   * This method gets called when the user clicks on the
-   * 'Share' button that is part of the top-level navbar.
-   */
+
   btnShareOnAction(): void {
+    if (this.docId.length === 0) {
+      return;
+    }
 
+    this.router.navigateByUrl(`/share-document/${this.docId}`);
   }
-
   // this part holds resizing
   // but because it doesn't work it's commented out
   // it's not removed because it may be used again

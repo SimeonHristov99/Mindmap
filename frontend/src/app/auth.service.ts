@@ -141,6 +141,11 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
+  getUsers(): Observable<object> {
+    const userId = localStorage.getItem('user-id');
+    return this.webService.get(`users/${userId}`);
+  }
+
   /**
    * This method removes the user,
    * their documents and the shapes they have created

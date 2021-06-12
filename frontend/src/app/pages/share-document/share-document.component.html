@@ -1,0 +1,22 @@
+<div class="centered-content">
+    <div class="modal-box">
+
+        <article class="panel is-link">
+            <p class="panel-heading">
+                Choose a user
+            </p>
+
+            <a class="panel-block" *ngFor="let user of users" (click)="shareDocument(user.email)">
+                <span class="panel-icon">
+                    <i class="fas fa-book" aria-hidden="true"></i>
+                </span>
+                {{ user.email }}
+            </a>
+        </article>
+
+        <div class="buttons is-right">
+            <button class="button is-medium" routerLink="/docs">Cancel</button>
+        </div>
+
+    </div>
+</div>

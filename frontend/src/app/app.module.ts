@@ -13,6 +13,7 @@ import { DraggableModule } from './draggable/draggable.module';
 import { WebReqInterceptor } from './web-req.interceptor';
 import { HeroGreetingComponent } from './pageHelpers/hero-greeting/hero-greeting.component';
 import { EditDocumentComponent } from './pages/edit-document/edit-document.component';
+import { ShareDocumentComponent } from './pages/share-document/share-document.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { EditDocumentComponent } from './pages/edit-document/edit-document.compo
     NewDocumentComponent,
     HeroGreetingComponent,
     EditDocumentComponent,
+    ShareDocumentComponent,
   ],
   imports: [
     BrowserModule,

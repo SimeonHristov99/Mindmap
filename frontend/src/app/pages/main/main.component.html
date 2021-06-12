@@ -33,7 +33,7 @@
                             <span>Save</span>
                         </button>
 
-                        <button class="button is-info mr-5">
+                        <button class="button is-info mr-5" (click)="btnShareOnAction()">
                             <span class="icon">
                                 <i class="fas fa-lock"></i>
                             </span>
@@ -50,11 +50,17 @@
                             </div>
                             <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                                 <div class="dropdown-content">
+                                    <a (click)="btnLogoutOnClick()" class="dropdown-item">
+                                        Log out
+                                    </a>
                                     <a [routerLink]="['/edit-document', docId]" class="dropdown-item">
-                                        Edit
+                                        Rename document
                                     </a>
                                     <a (click)="btnDeleteOnClick()" class="dropdown-item has-text-danger">
-                                        Delete
+                                        Delete document
+                                    </a>
+                                    <a (click)="btnDeleteAccountOnClick()" class="dropdown-item has-text-danger">
+                                        Delete account
                                     </a>
                                 </div>
                             </div>

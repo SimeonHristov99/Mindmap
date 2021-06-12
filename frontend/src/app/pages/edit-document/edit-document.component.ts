@@ -31,7 +31,7 @@ export class EditDocumentComponent implements OnInit, OnDestroy {
   }
 
   updateDocument(title: string): void {
-    if (this.docId.length === 0) {
+    if (this.docId.length === 0 || title.length < 3) {
       return;
     }
 

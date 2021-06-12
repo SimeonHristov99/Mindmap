@@ -24,12 +24,16 @@ app.use(function (req, res, next) { // Copied from https://enable-cors.org/serve
     res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
     res.header("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE");
     res.header("Access-Control-Allow-Headers",
-                "Origin, X-Requested-With, Content-Type, Accept, x-access-token, x-refresh-token, _id");
+        "Origin, X-Requested-With, Content-Type, Accept, x-access-token, x-refresh-token, _id");
     res.header("Access-Control-Expose-Headers", "x-access-token, x-refresh-token");
     next();
 });
 
-// check whether a request has a valid JWT access token
+//##############################################
+// Check whether a request has a valid JWT access token.
+// The request would need a valid x-access-token
+// to pass.
+//##############################################
 let authenticate = (req, res, next) => {
     let token = req.header('x-access-token');
 
@@ -46,9 +50,10 @@ let authenticate = (req, res, next) => {
 }
 
 //##############################################
-// Verify Refresh Token (verify the session)
+// Verify that a user with that refresh token exists.
+// The request would need a valid x-refresh-token
+// to pass.
 //##############################################
-
 let verifySession = (req, res, next) => {
     let refreshToken = req.header('x-refresh-token');
     let _id = req.header('_id');
@@ -101,11 +106,10 @@ let verifySession = (req, res, next) => {
 
 /**
  * GET /docs
- * Purpose: Get all documents.
+ * Purpose: Return an array of all the documents in the database
+ * that belong to the authenticated user.
  */
 app.get('/docs', authenticate, (req, res) => {
-    // Return an array of all the documents in the database
-    // that belong to the authenticated user.
     Document.find({
         _userId: req.user_id
     }).then((docs) => {
@@ -156,10 +160,9 @@ app.patch('/docs/:id', authenticate, (req, res) => {
 
 /**
  * DELETE /docs/:id
- * Purpose: Delete a document.
+ * Purpose: Delete the document with the id in the URL.
  */
 app.delete('/docs/:id', authenticate, (req, res) => {
-    // Delete the specified document (with the id in the URL)
     Document.findOneAndRemove({
         _id: req.params.id,
         _userId: req.user_id
@@ -168,7 +171,7 @@ app.delete('/docs/:id', authenticate, (req, res) => {
 
         // delete all the shapes in the to be deleted document
         deleteShapesFromDocument(docToRemove._id);
-    })
+    });
 });
 
 
@@ -294,6 +297,20 @@ app.delete('/docs/:docId/shapes/:shapeId', authenticate, (req, res) => {
 //##############################################
 
 /**
+ * GET /users
+ * Purpose: Get all users.
+ */
+app.get('/users/:id', authenticate, (req, res) => {
+    User.find({
+        _id: { $ne: req.params.id }
+    }).then((users) => {
+        res.send(users);
+    }).catch((err) => {
+        res.send(err);
+    });
+});
+
+/**
  * POST /users
  * Purpose: Sign up / Create a user.
  */
@@ -330,7 +347,6 @@ app.post('/users/login', (req, res) => {
 
     User.findByCredentials(email, password).then((user) => {
         return user.createSession().then((refreshToken) => {
-
             return user.generateAccessAuthToken().then((accToken) => {
                 return { accToken, refreshToken };
             });
@@ -343,6 +359,22 @@ app.post('/users/login', (req, res) => {
     }).catch((err) => {
         res.status(400).send(err);
     })
+});
+
+/**
+ * DELETE /users/:id
+ * Purpose: Delete the user with the id in the URL.
+ */
+app.delete('/users/:id', authenticate, (req, res) => {
+    User.findByIdAndRemove({
+        _id: req.params.id
+    }).then((userToRemove) => {
+        res.send(userToRemove);
+
+        // delete all documents and shapes
+        // the user had created
+        deleteDocs(userToRemove._id);
+    });
 });
 
 /**
@@ -359,9 +391,7 @@ app.get('/users/me/access-token', verifySession, (req, res) => {
     }).catch((err) => {
         res.status(400).send(err);
     });
-
 });
-
 
 
 //##############################################################################
@@ -374,7 +404,20 @@ let deleteShapesFromDocument = (_docId) => {
     });
 }
 
-
+let deleteDocs = (_removedUserId) => {
+    Document.find({
+        _userId: _removedUserId
+    }).then((docs) => {
+        docs.forEach(doc => {
+            Document.findOneAndRemove({
+                _id: doc._id,
+                _userId: _removedUserId
+            }).then((docToRemove) => {
+                deleteShapesFromDocument(docToRemove._id);
+            });
+        });
+    });
+}
 
 
 app.listen(3001, () => {

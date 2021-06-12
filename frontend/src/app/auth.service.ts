@@ -20,17 +20,17 @@ export class AuthService {
     }
   }
 
-  private removeSession(): void {
-    localStorage.removeItem('user-id');
-    localStorage.removeItem('x-access-token');
-    localStorage.removeItem('x-refresh-token');
-  }
-
   constructor(
     private webService: WebRequestService,
     private router: Router,
     private http: HttpClient,
   ) { }
+
+  removeSession(): void {
+    localStorage.removeItem('user-id');
+    localStorage.removeItem('x-access-token');
+    localStorage.removeItem('x-refresh-token');
+  }
 
   getUserId(): string | null {
     return localStorage.getItem('user-id');
@@ -45,7 +45,6 @@ export class AuthService {
     const id: string | null = this.getUserId();
 
     if (refreshToken && id) {
-
       return this.http.get(`${this.webService.ROOT_URL}/users/me/access-token`, {
         headers: {
           'x-refresh-token': refreshToken,
@@ -62,7 +61,6 @@ export class AuthService {
 
         })
       );
-
     }
 
     return throwError('No token or ID');
@@ -74,6 +72,35 @@ export class AuthService {
 
   setAccessToken(value: string): void {
     localStorage.setItem('x-access-token', value);
+  }
+
+  /**
+   * This method checks the passed in credentials and creates
+   * an account for the user if they are valid.
+   *
+   * @param[in] email
+   *     This is the provided email.
+   *
+   * @param[in] password
+   *     This is the provided password.
+   *
+   * @returns
+   *     The object returned from the database wrapped in an Observable.
+   */
+  signup(email: string, password: string): Observable<object> {
+    return this.webService.signup(email, password).pipe(
+      shareReplay() as OperatorFunction<object, HttpResponse<any>>,
+      tap((res: HttpResponse<any>) => {
+
+        this.setSession(
+          res.body._id,
+          res.headers.get('x-access-token'),
+          res.headers.get('x-refresh-token'),
+        );
+
+        console.log('Successfully signed up and now logged in!');
+      })
+    );
   }
 
   /**
@@ -105,40 +132,13 @@ export class AuthService {
     );
   }
 
+  /**
+   * This method removes the tokens from local storage
+   * and redirects the user gets to the 'Log in' page.
+   */
   logout(): void {
     this.removeSession();
-
     this.router.navigateByUrl('/login');
-  }
-
-  /**
-   * This method checks the passed in credentials and creates
-   * an account for the user if they are valid.
-   *
-   * @param[in] email
-   *     This is the provided email.
-   *
-   * @param[in] password
-   *     This is the provided password.
-   *
-   * @returns
-   *     The object returned from the database wrapped in an Observable.
-   */
-
-  signup(email: string, password: string): Observable<object> {
-    return this.webService.signup(email, password).pipe(
-      shareReplay() as OperatorFunction<object, HttpResponse<any>>,
-      tap((res: HttpResponse<any>) => {
-
-        this.setSession(
-          res.body._id,
-          res.headers.get('x-access-token'),
-          res.headers.get('x-refresh-token'),
-        );
-
-        console.log('Successfully signed up and now logged in!');
-      })
-    );
   }
 
 

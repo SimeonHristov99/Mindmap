@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth.service';
 import { DocumentService } from 'src/app/document.service';
 import { Shape } from 'src/app/models/shape.model';
 
@@ -110,13 +111,14 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private docServ: DocumentService,
+    private authServ: AuthService,
     private route: ActivatedRoute,
+    private router: Router,
     labelValueRef: ElementRef,
     fillColorRef: ElementRef,
     borderColorRef: ElementRef,
     textColorRef: ElementRef,
     middleColumnRef: ElementRef,
-    private router: Router,
   ) {
     this.labelValueRef = labelValueRef;
     this.fillColorRef = fillColorRef;
@@ -651,6 +653,36 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.isSaving = false;
     }, 4000);
+  }
+
+  /**
+   * This method gets called when the user clicks on the
+   * 'Log out' button that is part of the upper-right menu.
+   * The local storage gets cleared, removing the tokens
+   * and the user gets redirected to the 'Log in' page.
+   */
+  btnLogoutOnClick(): void {
+    this.authServ.logout();
+  }
+
+  /**
+   * This method gets called when the user clicks on the
+   * 'Delete Account' button that the last option in the
+   * upper-right menu.
+   * The account and all associated documents and shapes
+   * are removed from the database and the user gets
+   * redirected to the 'Sign up' page.
+   */
+  btnDeleteAccountOnClick(): void {
+    this.router.navigateByUrl('signup');
+  }
+
+  /**
+   * This method gets called when the user clicks on the
+   * 'Share' button that is part of the top-level navbar.
+   */
+  btnShareOnAction(): void {
+
   }
 
   // this part holds resizing

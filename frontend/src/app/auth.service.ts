@@ -97,8 +97,6 @@ export class AuthService {
           res.headers.get('x-access-token'),
           res.headers.get('x-refresh-token'),
         );
-
-        console.log('Successfully signed up and now logged in!');
       })
     );
   }
@@ -126,8 +124,6 @@ export class AuthService {
           res.headers.get('x-access-token'),
           res.headers.get('x-refresh-token'),
         );
-
-        console.log('LOGGED IN!');
       })
     );
   }

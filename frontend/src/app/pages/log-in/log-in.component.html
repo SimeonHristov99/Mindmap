@@ -16,17 +16,19 @@
                             <i class="fas fa-envelope"></i>
                         </span>
                     </div>
+                    <p *ngIf="this.emailFail()" class="help is-danger">This email is invalid.</p>
                 </div>
-
+                
                 <div class="field">
                     <label for="" class="label">Password</label>
                     <div class="control has-icons-left">
                         <input #passwordInput class="input has-background-light" type="password" placeholder="*******"
-                            required>
+                        required>
                         <span class="icon is-small is-left">
                             <i class="fa fa-lock"></i>
                         </span>
                     </div>
+                    <p *ngIf="this.passwordFail()" class="help is-danger">This password is invalid.</p>
                 </div>
 
                 <div class="field pt-4 pb-4">
@@ -37,7 +39,7 @@
                 </div>
 
                 <div>
-                    Don't have an account? <a href="/signup">Sign up now</a>.
+                    Don't have an account? <a href="/signup">Sign up</a> now.
                 </div>
 
             </div>

@@ -10,6 +10,8 @@ const bodyParser = require('body-parser');
 const { Document, Shape, User } = require('./db/models');
 const jwt = require('jsonwebtoken');
 
+require('dotenv').config();
+
 //##############################################################################
 // MIDDLEWARE
 //##############################################################################
@@ -180,7 +182,7 @@ app.delete('/docs/:id', authenticate, (req, res) => {
 //##############################################
 
 /**
- * GET /docs/:docId/tasks
+ * GET /docs/:docId/shapes
  * Purpose: Get all shapes that belong
  * to a specific document (specified by docId).
  */
@@ -192,9 +194,6 @@ app.get('/docs/:docId/shapes', authenticate, (req, res) => {
     })
 });
 
-
-
-// Sharing will happen here I suppose.
 /**
  * POST /docs
  * Purpose: Create a new shape in a specific document (specified by docId).
@@ -420,7 +419,6 @@ let deleteDocs = (_removedUserId) => {
     });
 }
 
-
-app.listen(3001, () => {
+app.listen(process.env.PORT, () => {
     console.log(`Server is listening on port 3001...`);
 })

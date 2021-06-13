@@ -133,16 +133,16 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    MainComponent.subscriptions.push(this.docServ.getDocs().subscribe((docs: any) => {
-      this.docs = docs;
+    MainComponent.subscriptions.push(this.docServ.getDocs().subscribe((docs: object) => {
+      this.docs = docs as Document[];
     }));
 
     MainComponent.subscriptions.push(this.route.params.subscribe((params: Params) => {
       if (params.docId) {
         this.docId = params.docId;
 
-        MainComponent.subscriptions.push(this.docServ.getShapes(params.docId).subscribe((shapes: any) => {
-          this.shapes = shapes;
+        MainComponent.subscriptions.push(this.docServ.getShapes(params.docId).subscribe((shapes: object) => {
+          this.shapes = shapes as Shape[];
         }));
       }
     }));

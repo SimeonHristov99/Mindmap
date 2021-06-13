@@ -16,6 +16,8 @@
                             <i class="fas fa-envelope"></i>
                         </span>
                     </div>
+                    <p *ngIf="this.emailTakenFail()" class="help is-danger">This email is already registered.</p>
+                    <p *ngIf="this.emailFail()" class="help is-danger">This email is invalid.</p>
                 </div>
 
                 <div class="field">
@@ -27,6 +29,7 @@
                             <i class="fa fa-lock"></i>
                         </span>
                     </div>
+                    <p *ngIf="this.passwordFail()" class="help is-danger">Password must contain at least eight characters, at least one letter and one number.</p>
                 </div>
 
                 <div class="field pt-4 pb-4">
@@ -35,9 +38,8 @@
                         Sign up
                     </button>
                 </div>
-                
                 <div>
-                    <a href="/login">I already have a Mapster Account</a>.
+                    <a href="/login">I already have a Mapster Account</a>
                 </div>
 
             </div>

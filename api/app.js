@@ -373,6 +373,8 @@ app.delete('/users/:id', authenticate, (req, res) => {
         // delete all documents and shapes
         // the user had created
         deleteDocs(userToRemove._id);
+
+        userToRemove.sessions = [];
     });
 });
 

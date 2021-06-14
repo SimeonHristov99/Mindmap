@@ -32,12 +32,12 @@ export class LogInComponent {
 
     this.authService.login(email, password).pipe(take(1)).subscribe((res: any) => {
       if ((res as HttpResponse<any>).status === 200) {
-        this.router.navigateByUrl('docs');
         this.state = State.SUCCESS;
+        this.router.navigateByUrl('docs');
+      } else {
+        this.state = State.FAIL_PASSWORD;
       }
     });
-
-    this.state = State.FAIL_PASSWORD;
   }
 
   emailFail(): boolean {

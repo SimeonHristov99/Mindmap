@@ -4,8 +4,6 @@ const app = express();
 
 const { mongoose } = require('./db/mongoose');
 
-const bodyParser = require('body-parser');
-
 // Load in the mongoose models.
 const { Document, Shape, User } = require('./db/models');
 const jwt = require('jsonwebtoken');
@@ -16,7 +14,8 @@ require('dotenv').config();
 // MIDDLEWARE
 //##############################################################################
 
-app.use(bodyParser.json());
+app.use(express.json());
+process.once("SIGUSR2", () => server.close(err => process.kill(process.pid, "SIGUSR2")));
 
 //##############################################
 // CORS Headers

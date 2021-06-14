@@ -1,11 +1,12 @@
 import { HttpResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth.service';
 import { DocumentService } from 'src/app/document.service';
 import { Shape } from 'src/app/models/shape.model';
+import { Document } from 'src/app/models/document.model';
 import { Actions } from 'src/app/user-actions';
 
 /**
@@ -26,7 +27,7 @@ interface Action {
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
 })
-export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MainComponent implements OnInit, OnDestroy {
 
   /**
    * This static property is used to modify the zooming in and out.
@@ -773,9 +774,10 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
    * redirected to the 'Sign up' page.
    */
   btnDeleteAccountOnClick(): void {
-    this.authServ.delete().pipe(take(1)).subscribe((res: any) => {
+    this.authServ.delete().pipe(take(1)).subscribe((res: object) => {
       console.log(res as HttpResponse<any>);
     });
+    this.authServ.logout();
     this.router.navigateByUrl('signup');
   }
 

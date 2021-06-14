@@ -1,4 +1,4 @@
 export class Document {
-    _id? = '';
+    _id = '';
     title = 'N/A';
 }

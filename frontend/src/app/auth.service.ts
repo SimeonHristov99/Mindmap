@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { shareReplay, tap } from 'rxjs/operators';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { EMPTY, empty, Observable, OperatorFunction, throwError } from 'rxjs';
+import { Observable, OperatorFunction, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -10,13 +10,26 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
 
+  /**
+   * This method inserts the id of the user and their access and
+   * refresh tokens in the local storage.
+   *
+   * @param[in] userId
+   *     This is the id of the user as it came from the database.
+   *
+   * @param[in] accessToken
+   *     This is the access token (jwt) of the user as it came from the database.
+   *
+   * @param[in] refreshToken
+   *     This is the refresh token of the user as it came from the database.
+   */
   private setSession(userId: string, accessToken: string | null, refreshToken: string | null): void {
     if (accessToken && refreshToken) {
       localStorage.setItem('user-id', userId);
       localStorage.setItem('x-access-token', accessToken);
       localStorage.setItem('x-refresh-token', refreshToken);
     } else {
-      alert('AuthService: Error in setSession!');
+      console.log('AuthService: Error in setSession!');
     }
   }
 
@@ -26,20 +39,65 @@ export class AuthService {
     private http: HttpClient,
   ) { }
 
+  /**
+   * This method removes the id of the user and their access and
+   * refresh tokens from the local storage. By doing this, the session is
+   * invalidated.
+   */
   removeSession(): void {
     localStorage.removeItem('user-id');
     localStorage.removeItem('x-access-token');
     localStorage.removeItem('x-refresh-token');
   }
 
+  /**
+   * This method returns the id of the user from the local storage.
+   *
+   * @returns
+   *     The id of the user as it came from the database.
+   */
   getUserId(): string | null {
     return localStorage.getItem('user-id');
   }
 
+  /**
+   * This method returns the access token (jwt) of
+   * the user from the local storage.
+   *
+   * @returns
+   *     The access token (jwt) of the user as it came from the database.
+   */
   getAccessToken(): string | null {
     return localStorage.getItem('x-access-token');
   }
 
+  /**
+   * This method sets the access token (jwt) of
+   * the user in the local storage.
+   */
+  setAccessToken(value: string): void {
+    localStorage.setItem('x-access-token', value);
+  }
+
+  /**
+   * This method returns the refresh token of
+   * the user from the local storage.
+   *
+   * @returns
+   *     The refresh token of the user as it came from the database.
+   */
+  getRefreshToken(): string | null {
+    return localStorage.getItem('x-refresh-token');
+  }
+
+  /**
+   * This method generates a new access token (jwt)
+   * based on the refresh token of the user.
+   *
+   * @returns
+   *     A new access token (jwt)
+   *     based on the refresh token of the user.
+   */
   getNewAccessToken(): Observable<object> {
     const refreshToken: string | null = this.getRefreshToken();
     const id: string | null = this.getUserId();
@@ -58,20 +116,11 @@ export class AuthService {
           if (accToken) {
             this.setAccessToken(accToken);
           }
-
         })
       );
     }
 
     return throwError('No token or ID');
-  }
-
-  getRefreshToken(): string | null {
-    return localStorage.getItem('x-refresh-token');
-  }
-
-  setAccessToken(value: string): void {
-    localStorage.setItem('x-access-token', value);
   }
 
   /**
@@ -85,7 +134,8 @@ export class AuthService {
    *     This is the provided password.
    *
    * @returns
-   *     The object returned from the database wrapped in an Observable.
+   *     The newly regiested user object returned from the database
+   *     wrapped in an Observable.
    */
   signup(email: string, password: string): Observable<object> {
     return this.webService.signup(email, password).pipe(
@@ -112,7 +162,8 @@ export class AuthService {
    *     This is the provided password.
    *
    * @returns
-   *     The object returned from the database wrapped in an Observable.
+   *     The logged in user object returned from the database
+   *     wrapped in an Observable.
    */
   login(email: string, password: string): Observable<object> {
     return this.webService.login(email, password).pipe(
@@ -137,6 +188,13 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
+  /**
+   * This method returns all users apart from the user
+   * that has the id in the local storage.
+   *
+   * @returns
+   *     All users returned from the database wrapped in an Observable.
+   */
   getUsers(): Observable<object> {
     const userId = localStorage.getItem('user-id');
     return this.webService.get(`users/${userId}`);
@@ -151,7 +209,7 @@ export class AuthService {
    *     The id of the user to be deleted.
    *
    * @returns
-   *     The object returned from the database wrapped in an Observable.
+   *     The deleted object returned from the database wrapped in an Observable.
    */
   delete(): Observable<object> {
     const userId = localStorage.getItem('user-id');

@@ -6,21 +6,21 @@ import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth.service';
 import { DocumentService } from 'src/app/document.service';
 import { Shape } from 'src/app/models/shape.model';
+import { Actions } from 'src/app/user-actions';
 
-enum Actions {
-  ADD,
-  REMOVE,
-  ZOOM_OUT,
-  ZOOM_IN,
-  COPY,
-  PASTE,
-}
-
+/**
+ * This is a helper interface for the undo and redo system.
+ * It binds an actions with a shape, if a shape was affected.
+ */
 interface Action {
   type: Actions;
   alteredShape?: Shape;
 }
 
+/**
+ * This is the component responsible for the creations/modifications
+ * of documents and shapes.
+ */
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -28,25 +28,111 @@ interface Action {
 })
 export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  /**
+   * This static property is used to modify the zooming in and out.
+   * It gets updated after one of those actions is performed in the
+   * method that got called.
+   */
   private static scalingFactor = 1;
+
+  /**
+   * This static property is used for storing a shape when it gets copied.
+   */
   private static clipboard: Shape | null = null;
+
+  /**
+   * This static property is used for storing the index
+   * of the last shape the user clicked on.
+   */
   private static currentShapeIndex = -1;
+
+  /**
+   * This static property is used for storing any actions the user has undone.
+   */
   private static actionsUndo: Action[] = [];
+
+  /**
+   * This static property is used for storing any actions the user has redone.
+   */
   private static actionsRedo: Action[] = [];
+
+  /**
+   * This static property is used for storing any
+   * subscriptions to objects done while working with the API.
+   */
   private static subscriptions: Subscription[] = [];
 
+  /**
+   * This property is a container for all the shapes the user works with,
+   * respectively sees in the middle column.
+   *
+   * @Note
+   *     This container gets flushed
+   *     to the database when the user click on the 'Save' icon in the
+   *     top-level navbar. This is the only way to save the
+   *     shapes in the database,
+   */
   shapes: Shape[] = [];
-  docs: any;
+
+  /**
+   * This property is a container for all the documents the user works with,
+   * respectively sees in the left column.
+   */
+  docs: Document[] = [];
+
+  /**
+   * This property stores the name of the currently selected document.
+   * This is the document the name of
+   * which gets highlighted in the left column.
+   */
   currentDocName = '';
+
+  /**
+   * This is the id of the currently selected document as it is stored
+   * in the database. This is the document the name of
+   * which gets highlighted in the left column.
+   */
   docId = '';
+
+  /**
+   * This is property is an idication of whether or not the system
+   * is saving all shapes at the moment.
+   */
   isSaving = false;
 
-  @ViewChild('labelValue', { static: true }) labelValueRef: ElementRef;
-  @ViewChild('fillColor', { static: true }) fillColorRef: ElementRef;
-  @ViewChild('borderColor', { static: true }) borderColorRef: ElementRef;
-  @ViewChild('textColor', { static: true }) textColorRef: ElementRef;
+  /**
+   * This property is a reference to the 'Label' input field
+   * in the right column.
+   */
+  @ViewChild('labelValue', { static: true })
+  labelValueRef: ElementRef;
 
-  @ViewChild('middleColumn', { static: true }) middleColumnRef: ElementRef;
+  /**
+   * This property is a reference to the 'Text Colour' input field
+   * in the right column.
+   */
+  @ViewChild('textColor', { static: true })
+  textColorRef: ElementRef;
+
+  /**
+   * This property is a reference to the 'Border' input field
+   * in the right column.
+   */
+  @ViewChild('borderColor', { static: true })
+  borderColorRef: ElementRef;
+
+  /**
+   * This property is a reference to the 'Fill' input field
+   * in the right column.
+   */
+  @ViewChild('fillColor', { static: true })
+  fillColorRef: ElementRef;
+
+  /**
+   * This property is a reference to the main column HTML element.
+   */
+  @ViewChild('middleColumn', { static: true })
+  middleColumnRef: ElementRef;
 
   /**
    * This is a helper method for the 'zoomOut' public method.
@@ -128,10 +214,20 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
     this.middleColumnRef = middleColumnRef;
   }
 
+  /**
+   * This method is a lifecycle hook in which
+   * any subscriptions are cleared.
+   */
   ngOnDestroy(): void {
     MainComponent.subscriptions.forEach(s => s.unsubscribe());
   }
 
+  /**
+   * This method is a lifecycle hook in which
+   * all the shapes and documents are loaded from the database.
+   * Also, all references get binded to their corresponding
+   * HTML elements.
+   */
   ngOnInit(): void {
     MainComponent.subscriptions.push(this.docServ.getDocs().subscribe((docs: object) => {
       this.docs = docs as Document[];
@@ -196,8 +292,6 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
     }, false);
 
   }
-
-
 
   /**
    * The method sets the value of the variable
@@ -685,7 +779,14 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigateByUrl('signup');
   }
 
-
+  /**
+   * This method redirects the user to the component
+   * which holds the logic for the sharing functionality.
+   *
+   * @Note
+   *     The redirection occurs only if the user has clicked
+   *     on a document.
+   */
   btnShareOnAction(): void {
     if (this.docId.length === 0) {
       return;
@@ -693,51 +794,4 @@ export class MainComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.router.navigateByUrl(`/share-document/${this.docId}`);
   }
-  // this part holds resizing
-  // but because it doesn't work it's commented out
-  // it's not removed because it may be used again
-  ngAfterViewInit(): void {
-
-    // const resizers = this.input.nativeElement.querySelectorAll('.resizer');
-
-    // let currentResizer: HTMLElement;
-
-    // resizers.forEach(resizer => {
-    //   resizer.addEventListener('mousedown', mousedown);
-    //   function mousedown(e: PointerEvent | any): void {
-
-    //     currentResizer = e.target;
-    //     let prevX = e.clientX;
-    //     let prevY = e.clientY;
-
-    //     window.addEventListener('mousemove', mousemove);
-    //     window.addEventListener('mouseup', mouseup);
-
-    //     function mousemove(e: PointerEvent | any): void {
-    //       const parent = resizer.parentElement;
-
-    //       if (!parent) {
-    //         return;
-    //       }
-
-    //       const rect = parent.getBoundingClientRect();
-
-    //       if (currentResizer.classList.contains('se')) {
-    //         parent.style.width = rect.width - (prevX - e.clientX) + 'px';
-    //         parent.style.height = rect.height - (prevY - e.clientY) + 'px';
-    //       }
-
-    //       prevX = e.clientX;
-    //       prevY = e.clientY;
-    //     }
-
-    //     function mouseup(e: PointerEvent | any): void {
-    //       window.removeEventListener('mousemove', mousemove);
-    //       window.removeEventListener('mouseup', mouseup);
-    //     }
-    //   }
-    // });
-  }
-
-
 }

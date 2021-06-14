@@ -5,6 +5,10 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, OperatorFunction, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
+/**
+ * This service is responsible for coordinating the sessions
+ * of the users, incl. loggging in and signing in.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -215,5 +219,4 @@ export class AuthService {
     const userId = localStorage.getItem('user-id');
     return this.webService.delete(`users/${userId}`);
   }
-
 }

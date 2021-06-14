@@ -5,7 +5,7 @@
 
         <input #docTitleInput class="input has-background-light is-medium" type="text"
             placeholder="Enter a name, eg. Project Vulkan">
-
+        <p *ngIf="this.titleTooShort()" class="help is-danger">The document title should be at least 3 letters.</p>
         <br><br>
 
         <div class="buttons is-right">
@@ -13,6 +13,7 @@
             <button class="button is-medium is-primary has-text-white"
                 (click)="createDocument(docTitleInput.value)">Create</button>
         </div>
+
 
     </div>
 </div>
